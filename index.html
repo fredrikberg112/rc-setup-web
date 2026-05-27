@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>RC Setup Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header id="header">
+      <button id="back-btn" class="icon-btn hidden">←</button>
+      <h1 id="page-title">RC Setup Tracker</h1>
+      <button id="add-btn" class="icon-btn hidden">+</button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+      <!-- Models List View -->
+      <div id="view-models" class="view">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-models">0</div>
+            <div class="stat-label">Modeller</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-setups">0</div>
+            <div class="stat-label">Setups</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-tracks">0</div>
+            <div class="stat-label">Banor</div>
+          </div>
+        </div>
+        <div id="models-list" class="card-list"></div>
+        <div id="models-empty" class="empty-state hidden">
+          <div class="empty-icon">🚗</div>
+          <p>Inga modeller än</p>
+          <button class="btn btn-primary" onclick="showView('add-model')">Lägg till första modellen</button>
+        </div>
+      </div>
+
+      <!-- Add Model View -->
+      <div id="view-add-model" class="view hidden">
+        <form id="form-add-model" class="form-card">
+          <div class="form-group">
+            <label>Namn</label>
+            <input type="text" id="model-name" placeholder="t.ex. XB4" required>
+          </div>
+          <div class="form-group">
+            <label>Märke</label>
+            <input type="text" id="model-brand" placeholder="t.ex. XRAY" required>
+          </div>
+          <div class="form-group">
+            <label>Typ</label>
+            <select id="model-type">
+              <option value="Buggy">Buggy</option>
+              <option value="Truck">Truck</option>
+              <option value="Crawler">Crawler</option>
+              <option value="Drift">Drift</option>
+              <option value="On-Road">On-Road</option>
+              <option value="Other">Annat</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Spara</button>
+        </form>
+      </div>
+
+      <!-- Model Detail View -->
+      <div id="view-model-detail" class="view hidden">
+        <div id="model-info-card" class="card"></div>
+        <h2 class="section-title">Setups <span id="setup-count-badge">0</span></h2>
+        <div id="setups-list" class="card-list"></div>
+        <div id="setups-empty" class="empty-state hidden">
+          <p>Inga setups än</p>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showAddSetup()">+ Ny Setup</button>
+      </div>
+
+      <!-- Add Setup View -->
+      <div id="view-add-setup" class="view hidden">
+        <div style="padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--border);">
+          <button type="button" class="btn btn-secondary btn-full" id="reset-btn" onclick="resetCurrentSetup()">🔄 Återställ till Basic Setup</button>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; text-align: center;">Fyller i alla fält med grundvärden för vald modell</div>
+        </div>
+        <form id="form-add-setup" class="form-card">
+          <div class="form-section">
+            <h3>Info</h3>
+            <div class="form-group">
+              <label>Setup-namn</label>
+              <input type="text" id="setup-name" placeholder="t.ex. Club Race" required>
+            </div>
+            <div class="form-group">
+              <label>Bana</label>
+              <select id="setup-track"><option value="">Välj bana...</option></select>
+            </div>
+            <div class="form-group">
+              <label>Betyg</label>
+              <div class="rating-input">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+              </div>
+              <input type="hidden" id="setup-rating" value="3">
+            </div>
+            <div class="form-group">
+              <label>Anteckningar</label>
+              <textarea id="setup-notes" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>📸 Bilder</h3>
+            <div id="setup-photos" class="photo-grid"></div>
+            <input type="file" id="photo-input" accept="image/*" capture="camera" multiple class="hidden">
+            <button type="button" class="btn btn-secondary btn-full" onclick="document.getElementById('photo-input').click()">📷 Ta foto / Välj bild</button>
+          </div>
+
+          <div class="form-section">
+            <h3>⚡ ESC</h3>
+            <div class="form-group"><label>Modell</label><input type="text" id="esc-model"></div>
+            <div class="form-row">
+              <div class="form-group half"><label>Punch</label><input type="number" id="esc-punch" value="5" min="1" max="10"></div>
+              <div class="form-group half"><label>Drag Brake %</label><input type="number" id="esc-drag-brake" value="10" min="0" max="100"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Brake Force %</label><input type="number" id="esc-brake-force" value="75" min="0" max="100"></div>
+              <div class="form-group half"><label>Timing</label><input type="text" id="esc-timing" value="0°"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Cutoff</label><input type="text" id="esc-cutoff" value="3.2V/cell"></div>
+              <div class="form-group half"><label>Temp Limit</label><input type="text" id="esc-temp" value="85°C"></div>
+            </div>
+            <div class="form-group"><label>Anteckningar</label><textarea id="esc-notes" rows="2"></textarea></div>
+          </div>
+
+          <div class="form-section">
+            <h3>🔧 Chassi</h3>
+            <div class="form-subsection">Ride Height (mm)</div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-rh-f" value="23.0"></div>
+              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-rh-r" value="23.5"></div>
+            </div>
+            <div class="form-subsection">Camber (°)</div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-cb-f" value="-2.0"></div>
+              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-cb-r" value="-2.5"></div>
+            </div>
+            <div class="form-subsection">Toe (°)</div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-to-f" value="0.0"></div>
+              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-to-r" value="2.0"></div>
+            </div>
+            <div class="form-subsection">Shocks</div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram olja</label><input type="text" id="ch-sh-f" value="450"></div>
+              <div class="form-group half"><label>Bak olja</label><input type="text" id="ch-sh-r" value="400"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram fjäder</label><input type="text" id="ch-sp-f" value="Medium"></div>
+              <div class="form-group half"><label>Bak fjäder</label><input type="text" id="ch-sp-r" value="Medium-Soft"></div>
+            </div>
+            <div class="form-subsection">Diff Olja (CST)</div>
+            <div class="form-row">
+              <div class="form-group third"><label>Fram</label><input type="text" id="ch-df-f" value="7000"></div>
+              <div class="form-group third"><label>Bak</label><input type="text" id="ch-df-r" value="3000"></div>
+              <div class="form-group third"><label>Center</label><input type="text" id="ch-df-c" value="10000"></div>
+            </div>
+            <div class="form-row">
+              <label class="toggle-label"><input type="checkbox" id="ch-ar-f" checked> Anti-Roll Bar Fram</label>
+              <label class="toggle-label"><input type="checkbox" id="ch-ar-r"> Anti-Roll Bar Bak</label>
+            </div>
+            <div class="form-group"><label>Anteckningar</label><textarea id="ch-notes" rows="2"></textarea></div>
+          </div>
+
+          <div class="form-section">
+            <h3>🛞 Däck</h3>
+            <div class="form-group"><label>Märke</label><input type="text" id="tire-brand"></div>
+            <div class="form-group"><label>Modell</label><input type="text" id="tire-model"></div>
+            <div class="form-row">
+              <div class="form-group half"><label>Compound</label><input type="text" id="tire-compound"></div>
+              <div class="form-group half"><label>Insert</label><input type="text" id="tire-insert"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half">
+                <label>Lim-status</label>
+                <select id="tire-glue"><option>Fresh</option><option>OK</option><option>Behöver limmas</option></select>
+              </div>
+              <div class="form-group half">
+                <label>Slitage</label>
+                <select id="tire-wear"><option>Nya</option><option>Bra</option><option>Medel</option><option>Slitna</option></select>
+              </div>
+            </div>
+            <div class="form-group"><label>Anteckningar</label><textarea id="tire-notes" rows="2"></textarea></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Spara Setup</button>
+          <div style="height: 80px;"></div>
+        </form>
+      </div>
+
+      <!-- Setup Detail View -->
+      <div id="view-setup-detail" class="view hidden">
+        <div id="setup-detail-content"></div>
+        <div style="height: 80px;"></div>
+      </div>
+
+      <!-- Compare View -->
+      <div id="view-compare" class="view hidden">
+        <div class="compare-selectors">
+          <select id="compare-model" class="form-select"><option>Välj modell...</option></select>
+          <div class="compare-pair">
+            <select id="compare-setup-1" class="form-select"><option>Setup 1...</option></select>
+            <span>vs</span>
+            <select id="compare-setup-2" class="form-select"><option>Setup 2...</option></select>
+          </div>
+        </div>
+        <div id="compare-results"></div>
+      </div>
+
+      <!-- Tracks View -->
+      <div id="view-tracks" class="view hidden">
+        <div id="tracks-list" class="card-list"></div>
+        <div id="tracks-empty" class="empty-state hidden">
+          <div class="empty-icon">🏁</div>
+          <p>Inga banor än</p>
+          <button class="btn btn-primary" onclick="showView('add-track')">Lägg till bana</button>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="showView('add-track')">+ Ny Bana</button>
+      </div>
+
+      <!-- Add Track View -->
+      <div id="view-add-track" class="view hidden">
+        <form id="form-add-track" class="form-card">
+          <div class="form-group">
+            <label>Bana-namn</label>
+            <input type="text" id="track-name" required>
+          </div>
+          <div class="form-group">
+            <label>Plats</label>
+            <input type="text" id="track-location">
+          </div>
+          <div class="form-group">
+            <label>Underlag</label>
+            <select id="track-surface">
+              <option>Clay</option>
+              <option>Dirt</option>
+              <option>Astroturf</option>
+              <option>Carpet</option>
+              <option>Asphalt</option>
+              <option>Gravel</option>
+              <option>Sand</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Anteckningar</label>
+            <textarea id="track-notes" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Spara Bana</button>
+        </form>
+      </div>
+
+      <!-- All Setups View -->
+      <div id="view-all-setups" class="view hidden">
+        <div class="filter-bar">
+          <input type="text" id="setup-search" placeholder="🔍 Sök setups..." class="search-input">
+          <select id="setup-filter" class="form-select">
+            <option value="all">Alla</option>
+            <option value="favorites">Favoriter</option>
+            <option value="best">Bäst (4-5★)</option>
+            <option value="recent">Senaste</option>
+          </select>
+        </div>
+        <div id="all-setups-list" class="card-list"></div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+      <button class="nav-item active" data-view="models" onclick="showView('models')">
+        <span class="nav-icon">🚗</span>
+        <span class="nav-label">Modeller</span>
+      </button>
+      <button class="nav-item" data-view="all-setups" onclick="showView('all-setups')">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Setups</span>
+      </button>
+      <button class="nav-item" data-view="compare" onclick="showView('compare')">
+        <span class="nav-icon">⚖️</span>
+        <span class="nav-label">Jämför</span>
+      </button>
+      <button class="nav-item" data-view="tracks" onclick="showView('tracks')">
+        <span class="nav-icon">🏁</span>
+        <span class="nav-label">Banor</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>

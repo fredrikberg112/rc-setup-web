@@ -53,7 +53,21 @@ function seedData() {
     chToF: 1.5, chToR: 3.0, chShF: '600', chShR: '600',
     chSpF: '5.6', chSpR: '5.0',
     chDfF: '7000', chDfR: '3000', chDfC: '10000',
-    chArF: false, chArR: false, chNotes: 'RX8E 2026 Basic Setup: Ride height 8.0mm front, 9.0mm rear. Camber -2.0° front/rear. Toe-out 1.5° front, 3° rear. Shock oil 600 both. Shock positions: 2-DOT KIT front, 3 rear. Shock springs 5.6 front, 5.0 rear. Diff oil 7000/3000/10000. No anti-roll bars. Body position 17, wing height 10. Wheelbase 287, track width 250/260. Body post: Rear, Body mount: NO. Short pack.',
+    chArF: false, chArR: false,
+    chCtF: 6.0, chCtR: 0,
+    chShPosF: '2-DOT KIT', chShPosR: '3',
+    chBp: '17', chBh: '2mm',
+    chWh: '10', chWa: 0,
+    chAd: false,
+    chIr: '3.31:1', chFr: '',
+    chArmF: 'A', chArmR: 'D',
+    chSp: 'Rear', chCb: 'NO',
+    chSat: 'Standard', chSt: 'Graphite',
+    elMotor: 'Hobbywing 1900KV', elMotorTiming: '0°', elTurbo: '20%',
+    elServo: 'Savox 1252MG', elRx: 'Sanwa RX-482', elBatt: '2S 6000mAh 100C',
+    rtLaps: 0, rtBest: '', rtTotal: '', rtQual: 0, rtFinal: 0,
+    trTemp: 25, trAir: 22, trHum: 60,
+    chNotes: 'RX8E 2026 Basic Setup: Ride height 8.0mm front, 9.0mm rear. Camber -2.0° front/rear. Toe-out 1.5° front, 3° rear. Caster 6° front. Shock oil 600 both. Shock positions: 2-DOT KIT front, 3 rear. Shock springs 5.6 front, 5.0 rear. Diff oil 7000/3000/10000. No anti-roll bars. Body position 17, body height 2mm, wing height 10, wing angle 0°. No aero disk. Internal ratio 3.31:1. Arm mounts: A front, D rear. Body post: Rear, Caster block: NO, Suspension arm: Standard, Shock tower: Graphite. Motor: Hobbywing 1900KV. Track temp 25°C, air temp 22°C, humidity 60%.',
     tireBrand: 'Pro-Line', tireModel: 'Blockade',
     tireCompound: 'M3', tireInsert: 'Closed Cell',
     tireGlue: 'Fresh', tireWear: 'Nya',
@@ -321,11 +335,41 @@ function renderSetupDetail(id) {
       ['Ride Height Fram', s.chRhF + ' mm'], ['Ride Height Bak', s.chRhR + ' mm'],
       ['Camber Fram', s.chCbF + '°'], ['Camber Bak', s.chCbR + '°'],
       ['Toe Fram', s.chToF + '°'], ['Toe Bak', s.chToR + '°'],
-      ['Shock Fram', s.chShF], ['Shock Bak', s.chShR],
+      ['Caster Fram', (s.chCtF || '-') + '°'], ['Caster Bak', (s.chCtR || '-') + '°'],
+      ['Shock Oil Fram', s.chShF], ['Shock Oil Bak', s.chShR],
+      ['Shock Pos Fram', s.chShPosF || '-'], ['Shock Pos Bak', s.chShPosR || '-'],
       ['Spring Fram', s.chSpF], ['Spring Bak', s.chSpR],
       ['Diff Fram', s.chDfF], ['Diff Bak', s.chDfR], ['Diff Center', s.chDfC],
       ['Anti-Roll Fram', s.chArF ? 'Ja' : 'Nej'], ['Anti-Roll Bak', s.chArR ? 'Ja' : 'Nej'],
+      ['Body Position', s.chBp || '-'], ['Body Height', s.chBh || '-'],
+      ['Wing Height', s.chWh || '-'], ['Wing Angle', (s.chWa || '-') + '°'],
+      ['Aero Disk', s.chAd ? 'Ja' : 'Nej'],
+      ['Internal Ratio', s.chIr || '-'], ['Final Ratio', s.chFr || '-'],
+      ['Arm Mount Fram', s.chArmF || '-'], ['Arm Mount Bak', s.chArmR || '-'],
+      ['Steering Plate', s.chSp || '-'], ['Caster Block', s.chCb || '-'],
+      ['Susp Arm', s.chSat || '-'], ['Shock Tower', s.chSt || '-'],
       ['Anteckningar', s.chNotes]
+    ])}
+
+    ${specTable('⚡ Elektronik', [
+      ['ESC Modell', s.escModel], ['ESC Punch', s.escPunch + '/10'],
+      ['ESC Drag Brake', s.escDragBrake + '%'], ['ESC Brake Force', s.escBrakeForce + '%'],
+      ['ESC Timing', s.escTiming], ['ESC Cutoff', s.escCutoff],
+      ['ESC Temp', s.escTemp], ['ESC Anteckningar', s.escNotes],
+      ['Motor', s.elMotor || '-'], ['Motor Timing', s.elMotorTiming || '-'],
+      ['Turbo Boost', s.elTurbo || '-'], ['Servo', s.elServo || '-'],
+      ['Receiver', s.elRx || '-'], ['Batteri', s.elBatt || '-']
+    ])}
+
+    ${specTable('🏁 Körning', [
+      ['Varv', s.rtLaps || '-'], ['Bästa varv', s.rtBest || '-'],
+      ['Total tid', s.rtTotal || '-'], ['Kvalposition', s.rtQual || '-'],
+      ['Slutposition', s.rtFinal || '-']
+    ])}
+
+    ${specTable('🌡️ Förhållanden', [
+      ['Bantemp', (s.trTemp || '-') + '°C'], ['Lufttemp', (s.trAir || '-') + '°C'],
+      ['Luftfuktighet', (s.trHum || '-') + '%']
     ])}
 
     ${specTable('🛞 Däck', [
@@ -449,23 +493,63 @@ function resetToRX8EBasic() {
   document.getElementById('esc-temp').value = '85°C';
   document.getElementById('esc-notes').value = 'Stock ESC settings';
   
+  // Elektronik
+  document.getElementById('el-motor').value = 'Hobbywing 1900KV';
+  document.getElementById('el-motor-timing').value = '0°';
+  document.getElementById('el-turbo').value = '20%';
+  document.getElementById('el-servo').value = 'Savox 1252MG';
+  document.getElementById('el-rx').value = 'Sanwa RX-482';
+  document.getElementById('el-batt').value = '2S 6000mAh 100C';
+  
   // Chassi
-  document.getElementById('ch-rh-f').value = '5.0';
-  document.getElementById('ch-rh-r').value = '5.0';
+  document.getElementById('ch-rh-f').value = '8.0';
+  document.getElementById('ch-rh-r').value = '9.0';
   document.getElementById('ch-cb-f').value = '-2.0';
   document.getElementById('ch-cb-r').value = '-2.0';
-  document.getElementById('ch-to-f').value = '0.0';
-  document.getElementById('ch-to-r').value = '2.0';
-  document.getElementById('ch-sh-f').value = '450';
-  document.getElementById('ch-sh-r').value = '400';
-  document.getElementById('ch-sp-f').value = 'Medium';
-  document.getElementById('ch-sp-r').value = 'Medium-Soft';
+  document.getElementById('ch-to-f').value = '1.5';
+  document.getElementById('ch-to-r').value = '3.0';
+  document.getElementById('ch-sh-f').value = '600';
+  document.getElementById('ch-sh-r').value = '600';
+  document.getElementById('ch-sp-f').value = '5.6';
+  document.getElementById('ch-sp-r').value = '5.0';
   document.getElementById('ch-df-f').value = '7000';
   document.getElementById('ch-df-r').value = '3000';
   document.getElementById('ch-df-c').value = '10000';
-  document.getElementById('ch-ar-f').checked = true;
+  document.getElementById('ch-ar-f').checked = false;
   document.getElementById('ch-ar-r').checked = false;
-  document.getElementById('ch-notes').value = 'Basic RX8E setup: Ride height 5.0mm front/rear. Camber -2.0° front/rear. Toe 0° front, 2° rear. Shock oil 450/400. Diff oil 7000/3000/10000. Anti-roll bar front only.';
+  
+  // Nya fält
+  document.getElementById('ch-ct-f').value = '6.0';
+  document.getElementById('ch-ct-r').value = '';
+  document.getElementById('ch-sh-pos-f').value = '2-DOT KIT';
+  document.getElementById('ch-sh-pos-r').value = '3';
+  document.getElementById('ch-bp').value = '17';
+  document.getElementById('ch-bh').value = '2mm';
+  document.getElementById('ch-wh').value = '10';
+  document.getElementById('ch-wa').value = '0';
+  document.getElementById('ch-ad').checked = false;
+  document.getElementById('ch-ir').value = '3.31:1';
+  document.getElementById('ch-fr').value = '';
+  document.getElementById('ch-arm-f').value = 'A';
+  document.getElementById('ch-arm-r').value = 'D';
+  document.getElementById('ch-sp').value = 'Rear';
+  document.getElementById('ch-cb').value = 'NO';
+  document.getElementById('ch-sat').value = 'Standard';
+  document.getElementById('ch-st').value = 'Graphite';
+  
+  // Körning
+  document.getElementById('rt-laps').value = '';
+  document.getElementById('rt-best').value = '';
+  document.getElementById('rt-total').value = '';
+  document.getElementById('rt-qual').value = '';
+  document.getElementById('rt-final').value = '';
+  
+  // Förhållanden
+  document.getElementById('tr-temp').value = '25';
+  document.getElementById('tr-air').value = '22';
+  document.getElementById('tr-hum').value = '60';
+  
+  document.getElementById('ch-notes').value = 'RX8E 2026 Basic Setup: Ride height 8.0mm front, 9.0mm rear. Camber -2.0° front/rear. Toe-out 1.5° front, 3° rear. Caster 6° front. Shock oil 600 both. Shock positions: 2-DOT KIT front, 3 rear. Shock springs 5.6 front, 5.0 rear. Diff oil 7000/3000/10000. No anti-roll bars. Body position 17, body height 2mm, wing height 10, wing angle 0°. No aero disk. Internal ratio 3.31:1. Arm mounts: A front, D rear. Body post: Rear, Caster block: NO. Suspension arm: Standard, Shock tower: Graphite.';
   
   // Däck
   document.getElementById('tire-brand').value = 'Pro-Line';
@@ -599,6 +683,37 @@ document.getElementById('form-add-setup').onsubmit = (e) => {
     chArF: document.getElementById('ch-ar-f').checked,
     chArR: document.getElementById('ch-ar-r').checked,
     chNotes: document.getElementById('ch-notes').value.trim(),
+    chCtF: parseFloat(document.getElementById('ch-ct-f').value) || 0,
+    chCtR: parseFloat(document.getElementById('ch-ct-r').value) || 0,
+    chShPosF: document.getElementById('ch-sh-pos-f').value.trim(),
+    chShPosR: document.getElementById('ch-sh-pos-r').value.trim(),
+    chBp: document.getElementById('ch-bp').value.trim(),
+    chBh: document.getElementById('ch-bh').value.trim(),
+    chWh: document.getElementById('ch-wh').value.trim(),
+    chWa: parseFloat(document.getElementById('ch-wa').value) || 0,
+    chAd: document.getElementById('ch-ad').checked,
+    chIr: document.getElementById('ch-ir').value.trim(),
+    chFr: document.getElementById('ch-fr').value.trim(),
+    chArmF: document.getElementById('ch-arm-f').value.trim(),
+    chArmR: document.getElementById('ch-arm-r').value.trim(),
+    chSp: document.getElementById('ch-sp').value.trim(),
+    chCb: document.getElementById('ch-cb').value.trim(),
+    chSat: document.getElementById('ch-sat').value.trim(),
+    chSt: document.getElementById('ch-st').value.trim(),
+    elMotor: document.getElementById('el-motor').value.trim(),
+    elMotorTiming: document.getElementById('el-motor-timing').value.trim(),
+    elTurbo: document.getElementById('el-turbo').value.trim(),
+    elServo: document.getElementById('el-servo').value.trim(),
+    elRx: document.getElementById('el-rx').value.trim(),
+    elBatt: document.getElementById('el-batt').value.trim(),
+    rtLaps: parseInt(document.getElementById('rt-laps').value) || 0,
+    rtBest: document.getElementById('rt-best').value.trim(),
+    rtTotal: document.getElementById('rt-total').value.trim(),
+    rtQual: parseInt(document.getElementById('rt-qual').value) || 0,
+    rtFinal: parseInt(document.getElementById('rt-final').value) || 0,
+    trTemp: parseFloat(document.getElementById('tr-temp').value) || 0,
+    trAir: parseFloat(document.getElementById('tr-air').value) || 0,
+    trHum: parseInt(document.getElementById('tr-hum').value) || 0,
     tireBrand: document.getElementById('tire-brand').value.trim(),
     tireModel: document.getElementById('tire-model').value.trim(),
     tireCompound: document.getElementById('tire-compound').value.trim(),
@@ -835,3 +950,4 @@ function updateResetButtonText() {
 
 window.resetCurrentSetup = resetCurrentSetup;
 window.updateResetButtonText = updateResetButtonText;
+

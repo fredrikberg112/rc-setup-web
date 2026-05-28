@@ -15,7 +15,7 @@
   <div id="app">
     <!-- Header -->
     <header id="header">
-      <button id="back-btn" class="icon-btn hidden">←</button>
+      <button id="back-btn" class="icon-btn hidden">â†</button>
       <h1 id="page-title">RC Setup Tracker</h1>
       <button id="add-btn" class="icon-btn hidden">+</button>
     </header>
@@ -40,9 +40,9 @@
         </div>
         <div id="models-list" class="card-list"></div>
         <div id="models-empty" class="empty-state hidden">
-          <div class="empty-icon">🚗</div>
-          <p>Inga modeller än</p>
-          <button class="btn btn-primary" onclick="showView('add-model')">Lägg till första modellen</button>
+          <div class="empty-icon">ðŸš—</div>
+          <p>Inga modeller Ã¤n</p>
+          <button class="btn btn-primary" onclick="showView('add-model')">LÃ¤gg till fÃ¶rsta modellen</button>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
             <input type="text" id="model-name" placeholder="t.ex. XB4" required>
           </div>
           <div class="form-group">
-            <label>Märke</label>
+            <label>MÃ¤rke</label>
             <input type="text" id="model-brand" placeholder="t.ex. XRAY" required>
           </div>
           <div class="form-group">
@@ -78,7 +78,7 @@
         <h2 class="section-title">Setups <span id="setup-count-badge">0</span></h2>
         <div id="setups-list" class="card-list"></div>
         <div id="setups-empty" class="empty-state hidden">
-          <p>Inga setups än</p>
+          <p>Inga setups Ã¤n</p>
         </div>
         <button class="btn btn-primary btn-full" onclick="showAddSetup()">+ Ny Setup</button>
       </div>
@@ -86,8 +86,8 @@
       <!-- Add Setup View -->
       <div id="view-add-setup" class="view hidden">
         <div style="padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--border);">
-          <button type="button" class="btn btn-secondary btn-full" id="reset-btn" onclick="resetCurrentSetup()">🔄 Återställ till Basic Setup</button>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; text-align: center;">Fyller i alla fält med grundvärden för vald modell</div>
+          <button type="button" class="btn btn-secondary btn-full" id="reset-btn" onclick="resetCurrentSetup()">ðŸ”„ Ã…terstÃ¤ll till Basic Setup</button>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; text-align: center;">Fyller i alla fÃ¤lt med grundvÃ¤rden fÃ¶r vald modell</div>
         </div>
         <form id="form-add-setup" class="form-card">
           <div class="form-section">
@@ -98,16 +98,16 @@
             </div>
             <div class="form-group">
               <label>Bana</label>
-              <select id="setup-track"><option value="">Välj bana...</option></select>
+              <select id="setup-track"><option value="">VÃ¤lj bana...</option></select>
             </div>
             <div class="form-group">
               <label>Betyg</label>
               <div class="rating-input">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
+                <span class="star" data-value="1">â˜…</span>
+                <span class="star" data-value="2">â˜…</span>
+                <span class="star" data-value="3">â˜…</span>
+                <span class="star" data-value="4">â˜…</span>
+                <span class="star" data-value="5">â˜…</span>
               </div>
               <input type="hidden" id="setup-rating" value="3">
             </div>
@@ -118,14 +118,14 @@
           </div>
 
           <div class="form-section">
-            <h3>📸 Bilder</h3>
+            <h3>ðŸ“¸ Bilder</h3>
             <div id="setup-photos" class="photo-grid"></div>
             <input type="file" id="photo-input" accept="image/*" capture="camera" multiple class="hidden">
-            <button type="button" class="btn btn-secondary btn-full" onclick="document.getElementById('photo-input').click()">📷 Ta foto / Välj bild</button>
+            <button type="button" class="btn btn-secondary btn-full" onclick="document.getElementById('photo-input').click()">ðŸ“· Ta foto / VÃ¤lj bild</button>
           </div>
 
           <div class="form-section">
-            <h3>⚡ ESC</h3>
+            <h3>âš¡ ESC</h3>
             <div class="form-group"><label>Modell</label><input type="text" id="esc-model"></div>
             <div class="form-row">
               <div class="form-group half"><label>Punch</label><input type="number" id="esc-punch" value="5" min="1" max="10"></div>
@@ -133,31 +133,36 @@
             </div>
             <div class="form-row">
               <div class="form-group half"><label>Brake Force %</label><input type="number" id="esc-brake-force" value="75" min="0" max="100"></div>
-              <div class="form-group half"><label>Timing</label><input type="text" id="esc-timing" value="0°"></div>
+              <div class="form-group half"><label>Timing</label><input type="text" id="esc-timing" value="0Â°"></div>
             </div>
             <div class="form-row">
               <div class="form-group half"><label>Cutoff</label><input type="text" id="esc-cutoff" value="3.2V/cell"></div>
-              <div class="form-group half"><label>Temp Limit</label><input type="text" id="esc-temp" value="85°C"></div>
+              <div class="form-group half"><label>Temp Limit</label><input type="text" id="esc-temp" value="85Â°C"></div>
             </div>
             <div class="form-group"><label>Anteckningar</label><textarea id="esc-notes" rows="2"></textarea></div>
           </div>
 
           <div class="form-section">
-            <h3>🔧 Chassi</h3>
+            <h3>ðŸ”§ Chassi</h3>
             <div class="form-subsection">Ride Height (mm)</div>
             <div class="form-row">
               <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-rh-f" value="23.0"></div>
               <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-rh-r" value="23.5"></div>
             </div>
-            <div class="form-subsection">Camber (°)</div>
+            <div class="form-subsection">Camber (Â°)</div>
             <div class="form-row">
               <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-cb-f" value="-2.0"></div>
               <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-cb-r" value="-2.5"></div>
             </div>
-            <div class="form-subsection">Toe (°)</div>
+            <div class="form-subsection">Toe (Â°)</div>
             <div class="form-row">
               <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-to-f" value="0.0"></div>
               <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-to-r" value="2.0"></div>
+            </div>
+            <div class="form-subsection">Caster (Â°)</div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram</label><input type="number" step="0.5" id="ch-ct-f" value="0"></div>
+              <div class="form-group half"><label>Bak</label><input type="number" step="0.5" id="ch-ct-r" value="0"></div>
             </div>
             <div class="form-subsection">Shocks</div>
             <div class="form-row">
@@ -165,8 +170,12 @@
               <div class="form-group half"><label>Bak olja</label><input type="text" id="ch-sh-r" value="400"></div>
             </div>
             <div class="form-row">
-              <div class="form-group half"><label>Fram fjäder</label><input type="text" id="ch-sp-f" value="Medium"></div>
-              <div class="form-group half"><label>Bak fjäder</label><input type="text" id="ch-sp-r" value="Medium-Soft"></div>
+              <div class="form-group half"><label>Fram fjÃ¤der</label><input type="text" id="ch-sp-f" value="Medium"></div>
+              <div class="form-group half"><label>Bak fjÃ¤der</label><input type="text" id="ch-sp-r" value="Medium-Soft"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Fram position</label><input type="text" id="ch-sh-pos-f" placeholder="t.ex. 2-DOT KIT"></div>
+              <div class="form-group half"><label>Bak position</label><input type="text" id="ch-sh-pos-r" placeholder="t.ex. 3"></div>
             </div>
             <div class="form-subsection">Diff Olja (CST)</div>
             <div class="form-row">
@@ -178,49 +187,139 @@
               <label class="toggle-label"><input type="checkbox" id="ch-ar-f" checked> Anti-Roll Bar Fram</label>
               <label class="toggle-label"><input type="checkbox" id="ch-ar-r"> Anti-Roll Bar Bak</label>
             </div>
-            <div class="form-group"><label>Anteckningar</label><textarea id="ch-notes" rows="2"></textarea></div>
+            <div class="form-group"><label>Anteckningar</label><textarea id="ch-notes" rows="3"></textarea></div>
           </div>
 
           <div class="form-section">
-            <h3>🛞 Däck</h3>
-            <div class="form-group"><label>Märke</label><input type="text" id="tire-brand"></div>
-            <div class="form-group"><label>Modell</label><input type="text" id="tire-model"></div>
+            <h3>ðŸš— Kropp & Aero</h3>
             <div class="form-row">
-              <div class="form-group half"><label>Compound</label><input type="text" id="tire-compound"></div>
-              <div class="form-group half"><label>Insert</label><input type="text" id="tire-insert"></div>
+              <div class="form-group half"><label>Body Position</label><input type="text" id="ch-bp" placeholder="t.ex. 17"></div>
+              <div class="form-group half"><label>Body Height</label><input type="text" id="ch-bh" placeholder="t.ex. 2mm"></div>
             </div>
             <div class="form-row">
-              <div class="form-group half">
-                <label>Lim-status</label>
-                <select id="tire-glue"><option>Fresh</option><option>OK</option><option>Behöver limmas</option></select>
+              <div class="form-group half"><label>Wing Height</label><input type="text" id="ch-wh" placeholder="t.ex. 10"></div>
+              <div class="form-group half"><label>Wing Angle (Â°)</label><input type="number" step="0.5" id="ch-wa" value="0"></div>
+            </div>
+            <div class="form-row">
+              <label class="toggle-label"><input type="checkbox" id="ch-ad"> Aero Disk</label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>âš™ï¸ UtvÃ¤xling</h3>
+            <div class="form-row">
+              <div class="form-group half"><label>Internal Ratio</label><input type="text" id="ch-ir" placeholder="t.ex. 3.31:1"></div>
+              <div class="form-group half"><label>Final Ratio</label><input type="text" id="ch-fr" placeholder="Auto-berÃ¤knad"></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>ðŸ”— Ã–vrigt Chassi</h3>
+            <div class="form-row">
+              <div class="form-group half"><label>Arm Mount Fram</label><input type="text" id="ch-arm-f" placeholder="t.ex. A"></div>
+              <div class="form-group half"><label>Arm Mount Bak</label><input type="text" id="ch-arm-r" placeholder="t.ex. D"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group third"><label>Steering Plate</label><input type="text" id="ch-sp" placeholder="t.ex. Rear"></div>
+              <div class="form-group third"><label>Caster Block</label><input type="text" id="ch-cb" placeholder="t.ex. NO"></div>
+              <div class="form-group third"><label>Suspension Arm</label><input type="text" id="ch-sat" placeholder="t.ex. Standard"></div>
+            </div>
+            <div class="form-group"><label>Shock Tower</label><input type="text" id="ch-st" placeholder="t.ex. Graphite"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>ðŸ”Œ Elektronik</h3>
+            <div class="form-row">
+              <div class="form-group half"><label>Motor</label><input type="text" id="el-motor" placeholder="t.ex. Hobbywing 1900KV"></div>
+              <div class="form-group half"><label>Motor Timing</label><input type="text" id="el-motor-timing" placeholder="t.ex. 0Â°"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Turbo Boost</label><input type="text" id="el-turbo" placeholder="t.ex. 20%"></div>
+              <div class="form-group half"><label>Servo</label><input type="text" id="el-servo" placeholder="t.ex. Savox 1252MG"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Receiver</label><input type="text" id="el-rx" placeholder="t.ex. Sanwa RX-482"></div>
+              <div class="form-group half"><label>Batteri</label><input type="text" id="el-batt" placeholder="t.ex. 2S 6000mAh 100C"></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>ðŸ KÃ¶rning</h3>
+            <div class="form-row">
+              <div class="form-group half"><label>Varv</label><input type="number" id="rt-laps"></div>
+              <div class="form-group half"><label>BÃ¤sta varv</label><input type="text" id="rt-best" placeholder="mm:ss.ms"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Total tid</label><input type="text" id="rt-total" placeholder="mm:ss"></div>
+              <div class="form-group half"><label>Kvalposition</label><input type="number" id="rt-qual"></div>
+            </div>
+            <div class="form-group"><label>Slutposition</label><input type="number" id="rt-final"></div>
+          </div>
+
+          <div class="form-section">
+            <h3>ðŸŒ¡ï¸ FÃ¶rhÃ¥llanden</h3>
+            <div class="form-row">
+              <div class="form-group third"><label>Bantemp (Â°C)</label><input type="number" id="tr-temp"></div>
+              <div class="form-group third"><label>Lufttemp (Â°C)</label><input type="number" id="tr-air"></div>
+              <div class="form-group third"><label>Luftfukt (%)</label><input type="number" id="tr-hum" min="0" max="100"></div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>ðŸ›ž DÃ¤ck</h3>
+            <div class="form-group"><label>MÃ¤rke</label><input type="text" id="tire-brand" placeholder="t.ex. Pro-Line"></div>
+            <div class="form-row">
+              <div class="form-group half"><label>Modell</label><input type="text" id="tire-model" placeholder="t.ex. Blockade"></div>
+              <div class="form-group half"><label>Compound</label><input type="text" id="tire-compound" placeholder="t.ex. M3"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Insert</label><input type="text" id="tire-insert" placeholder="t.ex. Closed Cell"></div>
+              <div class="form-group half"><label>Lim-status</label>
+                <select id="tire-glue">
+                  <option>Fresh</option>
+                  <option>OK</option>
+                  <option>Needs Re-glue</option>
+                </select>
               </div>
-              <div class="form-group half">
-                <label>Slitage</label>
-                <select id="tire-wear"><option>Nya</option><option>Bra</option><option>Medel</option><option>Slitna</option></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group half"><label>Slitage</label>
+                <select id="tire-wear">
+                  <option>Nya</option>
+                  <option>Bra</option>
+                  <option>Medel</option>
+                  <option>Slitna</option>
+                </select>
               </div>
             </div>
             <div class="form-group"><label>Anteckningar</label><textarea id="tire-notes" rows="2"></textarea></div>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-full">Spara Setup</button>
-          <div style="height: 80px;"></div>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px">ðŸ’¾ Spara Setup</button>
         </form>
       </div>
 
       <!-- Setup Detail View -->
       <div id="view-setup-detail" class="view hidden">
         <div id="setup-detail-content"></div>
-        <div style="height: 80px;"></div>
       </div>
 
       <!-- Compare View -->
       <div id="view-compare" class="view hidden">
-        <div class="compare-selectors">
-          <select id="compare-model" class="form-select"><option>Välj modell...</option></select>
-          <div class="compare-pair">
-            <select id="compare-setup-1" class="form-select"><option>Setup 1...</option></select>
-            <span>vs</span>
-            <select id="compare-setup-2" class="form-select"><option>Setup 2...</option></select>
+        <div class="form-card">
+          <div class="form-group">
+            <label>Modell</label>
+            <select id="compare-model"><option>VÃ¤lj modell...</option></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Setup 1</label>
+              <select id="compare-setup-1"><option>Setup 1...</option></select>
+            </div>
+            <div class="form-group half">
+              <label>Setup 2</label>
+              <select id="compare-setup-2"><option>Setup 2...</option></select>
+            </div>
           </div>
         </div>
         <div id="compare-results"></div>
@@ -230,85 +329,75 @@
       <div id="view-tracks" class="view hidden">
         <div id="tracks-list" class="card-list"></div>
         <div id="tracks-empty" class="empty-state hidden">
-          <div class="empty-icon">🏁</div>
-          <p>Inga banor än</p>
-          <button class="btn btn-primary" onclick="showView('add-track')">Lägg till bana</button>
+          <div class="empty-icon">ðŸ</div>
+          <p>Inga banor Ã¤n</p>
+          <button class="btn btn-primary" onclick="showView('add-track')">LÃ¤gg till fÃ¶rsta banan</button>
         </div>
-        <button class="btn btn-primary btn-full" onclick="showView('add-track')">+ Ny Bana</button>
+        <button class="btn btn-primary btn-full" onclick="showView('add-track')" style="margin-top:16px">+ Ny Bana</button>
       </div>
 
       <!-- Add Track View -->
       <div id="view-add-track" class="view hidden">
         <form id="form-add-track" class="form-card">
           <div class="form-group">
-            <label>Bana-namn</label>
-            <input type="text" id="track-name" required>
+            <label>Namn</label>
+            <input type="text" id="track-name" placeholder="t.ex. MKRC Track" required>
           </div>
           <div class="form-group">
             <label>Plats</label>
-            <input type="text" id="track-location">
+            <input type="text" id="track-location" placeholder="t.ex. Stockholm">
           </div>
           <div class="form-group">
-            <label>Underlag</label>
+            <label>Banebana</label>
             <select id="track-surface">
-              <option>Clay</option>
-              <option>Dirt</option>
-              <option>Astroturf</option>
-              <option>Carpet</option>
+              <option value="">OkÃ¤nd</option>
               <option>Asphalt</option>
-              <option>Gravel</option>
-              <option>Sand</option>
+              <option>Carpet</option>
+              <option>Dirt</option>
+              <option>Clay</option>
+              <option>Astro</option>
             </select>
           </div>
           <div class="form-group">
             <label>Anteckningar</label>
             <textarea id="track-notes" rows="3"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary btn-full">Spara Bana</button>
+          <button type="submit" class="btn btn-primary btn-full">Spara</button>
         </form>
       </div>
 
       <!-- All Setups View -->
       <div id="view-all-setups" class="view hidden">
-        <div class="filter-bar">
-          <input type="text" id="setup-search" placeholder="🔍 Sök setups..." class="search-input">
-          <select id="setup-filter" class="form-select">
-            <option value="all">Alla</option>
-            <option value="favorites">Favoriter</option>
-            <option value="best">Bäst (4-5★)</option>
-            <option value="recent">Senaste</option>
+        <div class="form-card" style="margin-bottom:16px">
+          <input type="text" id="setup-search" placeholder="ðŸ” SÃ¶k setups..." style="width:100%">
+          <select id="setup-filter" style="margin-top:8px">
+            <option value="">Alla</option>
+            <option value="favorites">â­ Favoriter</option>
+            <option value="best">ðŸ‘ BÃ¤st betyg (4-5)</option>
+            <option value="recent">ðŸ“… Senaste 10</option>
           </select>
         </div>
         <div id="all-setups-list" class="card-list"></div>
       </div>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Nav -->
     <nav id="bottom-nav">
-      <button class="nav-item active" data-view="models" onclick="showView('models')">
-        <span class="nav-icon">🚗</span>
-        <span class="nav-label">Modeller</span>
-      </button>
-      <button class="nav-item" data-view="all-setups" onclick="showView('all-setups')">
-        <span class="nav-icon">⚙️</span>
-        <span class="nav-label">Setups</span>
-      </button>
-      <button class="nav-item" data-view="compare" onclick="showView('compare')">
-        <span class="nav-icon">⚖️</span>
-        <span class="nav-label">Jämför</span>
-      </button>
-      <button class="nav-item" data-view="tracks" onclick="showView('tracks')">
-        <span class="nav-icon">🏁</span>
-        <span class="nav-label">Banor</span>
-      </button>
+      <div class="nav-item active" data-view="models">
+        <span>ðŸš—</span><span>Modeller</span>
+      </div>
+      <div class="nav-item" data-view="all-setups">
+        <span>âš™ï¸</span><span>Setups</span>
+      </div>
+      <div class="nav-item" data-view="compare">
+        <span>âš–ï¸</span><span>JÃ¤mfÃ¶r</span>
+      </div>
+      <div class="nav-item" data-view="tracks">
+        <span>ðŸ</span><span>Banor</span>
+      </div>
     </nav>
   </div>
 
   <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
 </body>
 </html>

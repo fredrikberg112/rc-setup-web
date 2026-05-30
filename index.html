@@ -1,403 +1,1978 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#1a1a2e">
-  <title>RC Setup Tracker</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RC Setup Tracker</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-card-hover: #334155;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-light: #7dd3fc;
+  --border: #334155;
+  --danger: #f87171;
+  --success: #4ade80;
+  --warning: #fbbf24;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 16px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+h1 { font-size: 1.25rem; color: var(--accent); }
+.nav {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.nav-item {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+.nav-item:hover, .nav-item.active {
+  background: var(--bg-card);
+  color: var(--accent);
+}
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.card:hover { background: var(--bg-card-hover); }
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-icon { font-size: 1.5rem; }
+.card-body { flex: 1; }
+.card-title { font-weight: 600; }
+.card-subtitle { font-size: 0.875rem; color: var(--text-muted); }
+.card-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-top: 4px;
+}
+.card-chevron { color: var(--text-muted); font-size: 1.25rem; }
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-muted);
+}
+.empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.9; }
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-secondary { background: var(--bg-card-hover); color: var(--text); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-full { width: 100%; margin-top: 8px; }
+.form-group { margin-bottom: 16px; }
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+textarea { min-height: 80px; resize: vertical; }
+.hidden { display: none !important; }
+.spec-table {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.spec-table h3 {
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-label { color: var(--text-muted); }
+.spec-value { font-weight: 500; }
+.setup-detail-header { margin-bottom: 16px; }
+.setup-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+.rating-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.r1 { background: #f44336; color: white; }
+.r2 { background: #ff9800; color: white; }
+.r3 { background: #ffc107; color: black; }
+.r4 { background: #4caf50; color: white; }
+.r5 { background: #2196f3; color: white; }
+.action-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.photo-thumb {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.compare-section { margin-bottom: 16px; }
+.compare-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.compare-row.diff { background: rgba(56, 189, 248, 0.1); }
+.compare-setup-name { font-size: 0.75rem; margin-bottom: 2px; }
+.rating-input { display: flex; gap: 4px; }
+.rating-input .star {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.rating-input .star.active { color: var(--warning); }
+</style>
 </head>
 <body>
-  <div id="app">
-    <!-- Header -->
-    <header id="header">
-      <button id="back-btn" class="icon-btn hidden">←</button>
-      <h1 id="page-title">RC Setup Tracker</h1>
-      <button id="add-btn" class="icon-btn hidden">+</button>
-    </header>
+<div class="app">
+  <header>
+    <button id="back-btn" class="btn btn-secondary hidden">← Tillbaka</button>
+    <h1 id="page-title">RC Setup Tracker</h1>
+    <button id="add-btn" class="btn btn-primary">+ Ny</button>
+  </header>
 
-    <!-- Main Content Area -->
-    <main id="main-content">
-      <!-- Models List View -->
-      <div id="view-models" class="view">
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-value" id="stat-models">0</div>
-            <div class="stat-label">Modeller</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-setups">0</div>
-            <div class="stat-label">Setups</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value" id="stat-tracks">0</div>
-            <div class="stat-label">Banor</div>
-          </div>
-        </div>
-        <div id="models-list" class="card-list"></div>
-        <div id="models-empty" class="empty-state hidden">
-          <div class="empty-icon">🚗</div>
-          <p>Inga modeller än</p>
-          <button class="btn btn-primary" onclick="showView('add-model')">Lägg till första modellen</button>
-        </div>
-      </div>
+  <nav class="nav">
+    <div class="nav-item active" data-view="models">Modeller</div>
+    <div class="nav-item" data-view="all-setups">Alla Setups</div>
+    <div class="nav-item" data-view="compare">Jämför</div>
+    <div class="nav-item" data-view="tracks">Banor</div>
+  </nav>
 
-      <!-- Add Model View -->
-      <div id="view-add-model" class="view hidden">
-        <form id="form-add-model" class="form-card">
-          <div class="form-group">
-            <label>Namn</label>
-            <input type="text" id="model-name" placeholder="t.ex. XB4" required>
-          </div>
-          <div class="form-group">
-            <label>Märke</label>
-            <input type="text" id="model-brand" placeholder="t.ex. XRAY" required>
-          </div>
-          <div class="form-group">
-            <label>Typ</label>
-            <select id="model-type">
-              <option value="Buggy">Buggy</option>
-              <option value="Truck">Truck</option>
-              <option value="Crawler">Crawler</option>
-              <option value="Drift">Drift</option>
-              <option value="On-Road">On-Road</option>
-              <option value="Other">Annat</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary btn-full">Spara</button>
-        </form>
-      </div>
-
-      <!-- Model Detail View -->
-      <div id="view-model-detail" class="view hidden">
-        <div id="model-info-card" class="card"></div>
-        <h2 class="section-title">Setups <span id="setup-count-badge">0</span></h2>
-        <div id="setups-list" class="card-list"></div>
-        <div id="setups-empty" class="empty-state hidden">
-          <p>Inga setups än</p>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="showAddSetup()">+ Ny Setup</button>
-      </div>
-
-      <!-- Add Setup View -->
-      <div id="view-add-setup" class="view hidden">
-        <div style="padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--border);">
-          <button type="button" class="btn btn-secondary btn-full" id="reset-btn" onclick="resetCurrentSetup()">🔄 Återställ till Basic Setup</button>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; text-align: center;">Fyller i alla fält med grundvärden för vald modell</div>
-        </div>
-        <form id="form-add-setup" class="form-card">
-          <div class="form-section">
-            <h3>Info</h3>
-            <div class="form-group">
-              <label>Setup-namn</label>
-              <input type="text" id="setup-name" placeholder="t.ex. Club Race" required>
-            </div>
-            <div class="form-group">
-              <label>Bana</label>
-              <select id="setup-track"><option value="">Välj bana...</option></select>
-            </div>
-            <div class="form-group">
-              <label>Betyg</label>
-              <div class="rating-input">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
-              </div>
-              <input type="hidden" id="setup-rating" value="3">
-            </div>
-            <div class="form-group">
-              <label>Anteckningar</label>
-              <textarea id="setup-notes" rows="3"></textarea>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>📸 Bilder</h3>
-            <div id="setup-photos" class="photo-grid"></div>
-            <input type="file" id="photo-input" accept="image/*" capture="camera" multiple class="hidden">
-            <button type="button" class="btn btn-secondary btn-full" onclick="document.getElementById('photo-input').click()">📷 Ta foto / Välj bild</button>
-          </div>
-
-          <div class="form-section">
-            <h3>⚡ ESC</h3>
-            <div class="form-group"><label>Modell</label><input type="text" id="esc-model"></div>
-            <div class="form-row">
-              <div class="form-group half"><label>Punch</label><input type="number" id="esc-punch" value="5" min="1" max="10"></div>
-              <div class="form-group half"><label>Drag Brake %</label><input type="number" id="esc-drag-brake" value="10" min="0" max="100"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Brake Force %</label><input type="number" id="esc-brake-force" value="75" min="0" max="100"></div>
-              <div class="form-group half"><label>Timing</label><input type="text" id="esc-timing" value="0°"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Cutoff</label><input type="text" id="esc-cutoff" value="3.2V/cell"></div>
-              <div class="form-group half"><label>Temp Limit</label><input type="text" id="esc-temp" value="85°C"></div>
-            </div>
-            <div class="form-group"><label>Anteckningar</label><textarea id="esc-notes" rows="2"></textarea></div>
-          </div>
-
-          <div class="form-section">
-            <h3>🔧 Chassi</h3>
-            <div class="form-subsection">Ride Height (mm)</div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-rh-f" value="23.0"></div>
-              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-rh-r" value="23.5"></div>
-            </div>
-            <div class="form-subsection">Camber (°)</div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-cb-f" value="-2.0"></div>
-              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-cb-r" value="-2.5"></div>
-            </div>
-            <div class="form-subsection">Toe (°)</div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram</label><input type="number" step="0.1" id="ch-to-f" value="0.0"></div>
-              <div class="form-group half"><label>Bak</label><input type="number" step="0.1" id="ch-to-r" value="2.0"></div>
-            </div>
-            <div class="form-subsection">Caster (°)</div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram</label><input type="number" step="0.5" id="ch-ct-f" value="0"></div>
-              <div class="form-group half"><label>Bak</label><input type="number" step="0.5" id="ch-ct-r" value="0"></div>
-            </div>
-            <div class="form-subsection">Shocks</div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram olja</label><input type="text" id="ch-sh-f" value="450"></div>
-              <div class="form-group half"><label>Bak olja</label><input type="text" id="ch-sh-r" value="400"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram fjäder</label><input type="text" id="ch-sp-f" value="Medium"></div>
-              <div class="form-group half"><label>Bak fjäder</label><input type="text" id="ch-sp-r" value="Medium-Soft"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Fram position</label><input type="text" id="ch-sh-pos-f" placeholder="t.ex. 2-DOT KIT"></div>
-              <div class="form-group half"><label>Bak position</label><input type="text" id="ch-sh-pos-r" placeholder="t.ex. 3"></div>
-            </div>
-            <div class="form-subsection">Diff Olja (CST)</div>
-            <div class="form-row">
-              <div class="form-group third"><label>Fram</label><input type="text" id="ch-df-f" value="7000"></div>
-              <div class="form-group third"><label>Bak</label><input type="text" id="ch-df-r" value="3000"></div>
-              <div class="form-group third"><label>Center</label><input type="text" id="ch-df-c" value="10000"></div>
-            </div>
-            <div class="form-row">
-              <label class="toggle-label"><input type="checkbox" id="ch-ar-f" checked> Anti-Roll Bar Fram</label>
-              <label class="toggle-label"><input type="checkbox" id="ch-ar-r"> Anti-Roll Bar Bak</label>
-            </div>
-            <div class="form-group"><label>Anteckningar</label><textarea id="ch-notes" rows="3"></textarea></div>
-          </div>
-
-          <div class="form-section">
-            <h3>🚗 Kropp & Aero</h3>
-            <div class="form-row">
-              <div class="form-group half"><label>Body Position</label><input type="text" id="ch-bp" placeholder="t.ex. 17"></div>
-              <div class="form-group half"><label>Body Height</label><input type="text" id="ch-bh" placeholder="t.ex. 2mm"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Wing Height</label><input type="text" id="ch-wh" placeholder="t.ex. 10"></div>
-              <div class="form-group half"><label>Wing Angle (°)</label><input type="number" step="0.5" id="ch-wa" value="0"></div>
-            </div>
-            <div class="form-row">
-              <label class="toggle-label"><input type="checkbox" id="ch-ad"> Aero Disk</label>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>⚙️ Utväxling</h3>
-            <div class="form-row">
-              <div class="form-group half"><label>Internal Ratio</label><input type="text" id="ch-ir" placeholder="t.ex. 3.31:1"></div>
-              <div class="form-group half"><label>Final Ratio</label><input type="text" id="ch-fr" placeholder="Auto-beräknad"></div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>🔗 Övrigt Chassi</h3>
-            <div class="form-row">
-              <div class="form-group half"><label>Arm Mount Fram</label><input type="text" id="ch-arm-f" placeholder="t.ex. A"></div>
-              <div class="form-group half"><label>Arm Mount Bak</label><input type="text" id="ch-arm-r" placeholder="t.ex. D"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group third"><label>Steering Plate</label><input type="text" id="ch-sp" placeholder="t.ex. Rear"></div>
-              <div class="form-group third"><label>Caster Block</label><input type="text" id="ch-cb" placeholder="t.ex. NO"></div>
-              <div class="form-group third"><label>Suspension Arm</label><input type="text" id="ch-sat" placeholder="t.ex. Standard"></div>
-            </div>
-            <div class="form-group"><label>Shock Tower</label><input type="text" id="ch-st" placeholder="t.ex. Graphite"></div>
-          </div>
-
-          <div class="form-section">
-            <h3>🔌 Elektronik</h3>
-            <div class="form-row">
-              <div class="form-group half"><label>Motor</label><input type="text" id="el-motor" placeholder="t.ex. Hobbywing 1900KV"></div>
-              <div class="form-group half"><label>Motor Timing</label><input type="text" id="el-motor-timing" placeholder="t.ex. 0°"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Turbo Boost</label><input type="text" id="el-turbo" placeholder="t.ex. 20%"></div>
-              <div class="form-group half"><label>Servo</label><input type="text" id="el-servo" placeholder="t.ex. Savox 1252MG"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Receiver</label><input type="text" id="el-rx" placeholder="t.ex. Sanwa RX-482"></div>
-              <div class="form-group half"><label>Batteri</label><input type="text" id="el-batt" placeholder="t.ex. 2S 6000mAh 100C"></div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>🏁 Körning</h3>
-            <div class="form-row">
-              <div class="form-group half"><label>Varv</label><input type="number" id="rt-laps"></div>
-              <div class="form-group half"><label>Bästa varv</label><input type="text" id="rt-best" placeholder="mm:ss.ms"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Total tid</label><input type="text" id="rt-total" placeholder="mm:ss"></div>
-              <div class="form-group half"><label>Kvalposition</label><input type="number" id="rt-qual"></div>
-            </div>
-            <div class="form-group"><label>Slutposition</label><input type="number" id="rt-final"></div>
-          </div>
-
-          <div class="form-section">
-            <h3>🌡️ Förhållanden</h3>
-            <div class="form-row">
-              <div class="form-group third"><label>Bantemp (°C)</label><input type="number" id="tr-temp"></div>
-              <div class="form-group third"><label>Lufttemp (°C)</label><input type="number" id="tr-air"></div>
-              <div class="form-group third"><label>Luftfukt (%)</label><input type="number" id="tr-hum" min="0" max="100"></div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h3>🛞 Däck</h3>
-            <div class="form-group"><label>Märke</label><input type="text" id="tire-brand" placeholder="t.ex. Pro-Line"></div>
-            <div class="form-row">
-              <div class="form-group half"><label>Modell</label><input type="text" id="tire-model" placeholder="t.ex. Blockade"></div>
-              <div class="form-group half"><label>Compound</label><input type="text" id="tire-compound" placeholder="t.ex. M3"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Insert</label><input type="text" id="tire-insert" placeholder="t.ex. Closed Cell"></div>
-              <div class="form-group half"><label>Lim-status</label>
-                <select id="tire-glue">
-                  <option>Fresh</option>
-                  <option>OK</option>
-                  <option>Needs Re-glue</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group half"><label>Slitage</label>
-                <select id="tire-wear">
-                  <option>Nya</option>
-                  <option>Bra</option>
-                  <option>Medel</option>
-                  <option>Slitna</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group"><label>Anteckningar</label><textarea id="tire-notes" rows="2"></textarea></div>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-full" style="margin-top:20px">💾 Spara Setup</button>
-        </form>
-      </div>
-
-      <!-- Setup Detail View -->
-      <div id="view-setup-detail" class="view hidden">
-        <div id="setup-detail-content"></div>
-      </div>
-
-      <!-- Compare View -->
-      <div id="view-compare" class="view hidden">
-        <div class="form-card">
-          <div class="form-group">
-            <label>Modell</label>
-            <select id="compare-model"><option>Välj modell...</option></select>
-          </div>
-          <div class="form-row">
-            <div class="form-group half">
-              <label>Setup 1</label>
-              <select id="compare-setup-1"><option>Setup 1...</option></select>
-            </div>
-            <div class="form-group half">
-              <label>Setup 2</label>
-              <select id="compare-setup-2"><option>Setup 2...</option></select>
-            </div>
-          </div>
-        </div>
-        <div id="compare-results"></div>
-      </div>
-
-      <!-- Tracks View -->
-      <div id="view-tracks" class="view hidden">
-        <div id="tracks-list" class="card-list"></div>
-        <div id="tracks-empty" class="empty-state hidden">
-          <div class="empty-icon">🏁</div>
-          <p>Inga banor än</p>
-          <button class="btn btn-primary" onclick="showView('add-track')">Lägg till första banan</button>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="showView('add-track')" style="margin-top:16px">+ Ny Bana</button>
-      </div>
-
-      <!-- Add Track View -->
-      <div id="view-add-track" class="view hidden">
-        <form id="form-add-track" class="form-card">
-          <div class="form-group">
-            <label>Namn</label>
-            <input type="text" id="track-name" placeholder="t.ex. MKRC Track" required>
-          </div>
-          <div class="form-group">
-            <label>Plats</label>
-            <input type="text" id="track-location" placeholder="t.ex. Stockholm">
-          </div>
-          <div class="form-group">
-            <label>Banebana</label>
-            <select id="track-surface">
-              <option value="">Okänd</option>
-              <option>Asphalt</option>
-              <option>Carpet</option>
-              <option>Dirt</option>
-              <option>Clay</option>
-              <option>Astro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Anteckningar</label>
-            <textarea id="track-notes" rows="3"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary btn-full">Spara</button>
-        </form>
-      </div>
-
-      <!-- All Setups View -->
-      <div id="view-all-setups" class="view hidden">
-        <div class="form-card" style="margin-bottom:16px">
-          <input type="text" id="setup-search" placeholder="🔍 Sök setups..." style="width:100%">
-          <select id="setup-filter" style="margin-top:8px">
-            <option value="">Alla</option>
-            <option value="favorites">⭐ Favoriter</option>
-            <option value="best">👍 Bäst betyg (4-5)</option>
-            <option value="recent">📅 Senaste 10</option>
-          </select>
-        </div>
-        <div id="all-setups-list" class="card-list"></div>
-      </div>
-    </main>
-
-    <!-- Bottom Nav -->
-    <nav id="bottom-nav">
-      <div class="nav-item active" data-view="models">
-        <span>🚗</span><span>Modeller</span>
-      </div>
-      <div class="nav-item" data-view="all-setups">
-        <span>⚙️</span><span>Setups</span>
-      </div>
-      <div class="nav-item" data-view="compare">
-        <span>⚖️</span><span>Jämför</span>
-      </div>
-      <div class="nav-item" data-view="tracks">
-        <span>🏁</span><span>Banor</span>
-      </div>
-    </nav>
+  <!-- Models View -->
+  <div id="view-models" class="view">
+    <div id="models-list"></div>
+    <div id="models-empty" class="empty-state hidden">
+      <div class="empty-icon">🚗</div>
+      <p>Inga modeller än. Lägg till din första!</p>
+    </div>
   </div>
 
-  <script src="app.js"></script>
+  <!-- Model Detail -->
+  <div id="view-model-detail" class="view hidden">
+    <div id="model-info-card"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0;">
+      <h2>Setups <span id="setup-count-badge" class="card-badge">0</span></h2>
+      <button class="btn btn-primary" onclick="showAddSetup()">+ Ny Setup</button>
+    </div>
+    <div id="setups-list"></div>
+    <div id="setups-empty" class="empty-state hidden">
+      <div class="empty-icon">⚙️</div>
+      <p>Inga setups för denna modell än.</p>
+    </div>
+  </div>
+
+  <!-- Add Model -->
+  <div id="view-add-model" class="view hidden">
+    <form id="form-add-model">
+      <div class="form-group">
+        <label>Namn</label>
+        <input type="text" id="model-name" required placeholder="t.ex. RX8E 2026">
+      </div>
+      <div class="form-group">
+        <label>Märke</label>
+        <input type="text" id="model-brand" placeholder="t.ex. XRAY">
+      </div>
+      <div class="form-group">
+        <label>Typ</label>
+        <select id="model-type">
+          <option value="On-Road">On-Road</option>
+          <option value="Off-Road">Off-Road</option>
+          <option value="Drift">Drift</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Spara Modell</button>
+    </form>
+  </div>
+
+  <!-- Add Setup -->
+  <div id="view-add-setup" class="view hidden">
+    <form id="form-add-setup">
+      <div class="form-group">
+        <label>Setup-namn</label>
+        <input type="text" id="setup-name" required placeholder="t.ex. Täby Basic">
+      </div>
+      <div class="form-group">
+        <label>Bana</label>
+        <select id="setup-track"><option value="">Välj bana...</option></select>
+      </div>
+      <div class="form-group">
+        <label>Anteckningar</label>
+        <textarea id="setup-notes" placeholder="Allmänna anteckningar..."></textarea>
+      </div>
+
+      <!-- ESC Section -->
+      <div class="spec-table">
+        <h3>⚡ ESC Inställningar</h3>
+        <div class="form-group">
+          <label>Running Mode</label>
+          <select id="esc-running-mode">
+            <option value="Forward/Brake">Forward/Brake</option>
+            <option value="Forward/Reverse/Brake">Forward/Reverse/Brake</option>
+            <option value="Direct F/R">Direct F/R</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Max Reverse Force (%)</label>
+          <input type="number" id="esc-max-reverse-force" min="25" max="100" value="25">
+        </div>
+        <div class="form-group">
+          <label>Cutoff Voltage</label>
+          <select id="esc-cutoff-voltage">
+            <option value="No Protection">No Protection</option>
+            <option value="Auto (3.5V/cell)" selected>Auto (3.5V/cell)</option>
+            <option value="5.0V">5.0V</option>
+            <option value="9.6V">9.6V</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="esc-thermal-protection" checked> ESC Thermal Protection</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="esc-motor-thermal-protection" checked> Motor Thermal Protection</label>
+        </div>
+        <div class="form-group">
+          <label>BEC Voltage</label>
+          <select id="esc-bec-voltage">
+            <option value="6.0V">6.0V</option>
+            <option value="7.4V" selected>7.4V</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="esc-remote-off"> Remote Off</label>
+        </div>
+        <div class="form-group">
+          <label>Sensor Mode</label>
+          <select id="esc-sensor-mode">
+            <option value="Full Sensored" selected>Full Sensored</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Motor Rotation</label>
+          <select id="esc-motor-rotation">
+            <option value="CCW" selected>CCW</option>
+            <option value="CW">CW</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="esc-phase-ac-swap"> Phase-AC Swap</label>
+        </div>
+        <div class="form-group">
+          <label>Punch SW Point (%)</label>
+          <input type="number" id="esc-punch-sw-point" min="30" max="70" value="30">
+        </div>
+        <div class="form-group">
+          <label>Punch Rate1 Start (1-30)</label>
+          <input type="number" id="esc-punch-rate1-start" min="1" max="30" value="30">
+        </div>
+        <div class="form-group">
+          <label>Punch Rate2 End (1-30)</label>
+          <input type="number" id="esc-punch-rate2-end" min="1" max="30" value="30">
+        </div>
+        <div class="form-group">
+          <label>Punch Line</label>
+          <select id="esc-punch-line">
+            <option value="Custom">Custom</option>
+            <option value="Linear" selected>Linear</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Neutral Range (%)</label>
+          <select id="esc-neutral-range">
+            <option value="4">4%</option>
+            <option value="6" selected>6%</option>
+            <option value="8">8%</option>
+            <option value="10">10%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Initial Throttle Force (%)</label>
+          <input type="number" id="esc-initial-throttle-force" min="1" max="15" value="3">
+        </div>
+        <div class="form-group">
+          <label>Coast (%)</label>
+          <input type="number" id="esc-coast" min="0" max="30" value="0">
+        </div>
+        <div class="form-group">
+          <label>Softening Value (%)</label>
+          <input type="number" id="esc-softening-value" min="0" max="30" value="20">
+        </div>
+        <div class="form-group">
+          <label>Softening Range (%)</label>
+          <input type="number" id="esc-softening-range" min="0" max="75" value="30">
+        </div>
+        <div class="form-group">
+          <label>PWM Drive Freq</label>
+          <select id="esc-pwm-drive-freq">
+            <option value="Variable">Variable</option>
+            <option value="1K">1K</option>
+            <option value="4K" selected>4K</option>
+            <option value="32K">32K</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Brake Control</label>
+          <select id="esc-brake-control">
+            <option value="Hard Brake" selected>Hard Brake</option>
+            <option value="Soft Brake">Soft Brake</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Drag Brake (%)</label>
+          <input type="number" id="esc-drag-brake" min="0" max="100" value="12">
+        </div>
+        <div class="form-group">
+          <label>Max Brake Force (%)</label>
+          <input type="number" id="esc-max-brake-force" min="0" max="100" value="70">
+        </div>
+        <div class="form-group">
+          <label>Initial Brake Force</label>
+          <select id="esc-initial-brake-force">
+            <option value="0%">0%</option>
+            <option value="Drag Brake" selected>Drag Brake</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Brake Rate Control (0-20)</label>
+          <input type="number" id="esc-brake-rate-control" min="0" max="20" value="20">
+        </div>
+        <div class="form-group">
+          <label>Brake Frequency</label>
+          <select id="esc-brake-frequency">
+            <option value="Variable">Variable</option>
+            <option value="0.5K">0.5K</option>
+            <option value="2K" selected>2K</option>
+            <option value="16K">16K</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Boost Timing (°)</label>
+          <input type="number" id="esc-boost-timing" min="0" max="48" value="16">
+        </div>
+        <div class="form-group">
+          <label>Boost Start RPM</label>
+          <input type="number" id="esc-boost-start-rpm" min="1000" max="20000" value="3000">
+        </div>
+        <div class="form-group">
+          <label>Boost End RPM</label>
+          <input type="number" id="esc-boost-end-rpm" min="8000" max="50000" value="25000">
+        </div>
+        <div class="form-group">
+          <label>Boost Control</label>
+          <select id="esc-boost-control">
+            <option value="RPM">RPM</option>
+            <option value="Auto" selected>Auto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Turbo Timing (°)</label>
+          <input type="number" id="esc-turbo-timing" min="0" max="48" value="38">
+        </div>
+        <div class="form-group">
+          <label>Turbo Delay</label>
+          <select id="esc-turbo-delay">
+            <option value="Immediate">Immediate</option>
+            <option value="0.05s">0.05s</option>
+            <option value="0.1s" selected>0.1s</option>
+            <option value="1s">1s</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Turbo Increase Rate</label>
+          <select id="esc-turbo-increase-rate">
+            <option value="Immediate">Immediate</option>
+            <option value="18deg/0.1s" selected>18deg/0.1s</option>
+            <option value="48deg/0.1s">48deg/0.1s</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Turbo Decrease Rate</label>
+          <select id="esc-turbo-decrease-rate">
+            <option value="Immediate">Immediate</option>
+            <option value="21deg/0.1s" selected>21deg/0.1s</option>
+            <option value="48deg/0.1s">48deg/0.1s</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ESC Anteckningar</label>
+          <textarea id="esc-notes" placeholder="ESC-anteckningar..."></textarea>
+        </div>
+      </div>
+
+      <!-- Chassi Section -->
+      <div class="spec-table">
+        <h3>🔧 Chassi</h3>
+        <div class="form-group">
+          <label>Ride Height Fram (mm)</label>
+          <input type="number" id="ch-rh-f" step="0.1" value="8.0">
+        </div>
+        <div class="form-group">
+          <label>Ride Height Bak (mm)</label>
+          <input type="number" id="ch-rh-r" step="0.1" value="9.0">
+        </div>
+        <div class="form-group">
+          <label>Camber Fram (°)</label>
+          <input type="number" id="ch-cb-f" step="0.1" value="-2.0">
+        </div>
+        <div class="form-group">
+          <label>Camber Bak (°)</label>
+          <input type="number" id="ch-cb-r" step="0.1" value="-2.0">
+        </div>
+        <div class="form-group">
+          <label>Toe Fram (°)</label>
+          <input type="number" id="ch-to-f" step="0.1" value="1.5">
+        </div>
+        <div class="form-group">
+          <label>Toe Bak (°)</label>
+          <input type="number" id="ch-to-r" step="0.1" value="3.0">
+        </div>
+        <div class="form-group">
+          <label>Caster Fram (°)</label>
+          <input type="number" id="ch-ct-f" step="0.1" value="6.0">
+        </div>
+        <div class="form-group">
+          <label>Shock Oil Fram</label>
+          <input type="text" id="ch-sh-f" value="600">
+        </div>
+        <div class="form-group">
+          <label>Shock Oil Bak</label>
+          <input type="text" id="ch-sh-r" value="600">
+        </div>
+        <div class="form-group">
+          <label>Shock Pos Fram</label>
+          <input type="text" id="ch-sh-pos-f" value="2-DOT KIT">
+        </div>
+        <div class="form-group">
+          <label>Shock Pos Bak</label>
+          <input type="text" id="ch-sh-pos-r" value="3">
+        </div>
+        <div class="form-group">
+          <label>Spring Fram</label>
+          <input type="text" id="ch-sp-f" value="5.6">
+        </div>
+        <div class="form-group">
+          <label>Spring Bak</label>
+          <input type="text" id="ch-sp-r" value="5.0">
+        </div>
+        <div class="form-group">
+          <label>Diff Fram</label>
+          <input type="text" id="ch-df-f" value="7000">
+        </div>
+        <div class="form-group">
+          <label>Diff Bak</label>
+          <input type="text" id="ch-df-r" value="3000">
+        </div>
+        <div class="form-group">
+          <label>Diff Center</label>
+          <input type="text" id="ch-df-c" value="10000">
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="ch-ar-f"> Anti-Roll Fram</label>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="ch-ar-r"> Anti-Roll Bak</label>
+        </div>
+        <div class="form-group">
+          <label>Body Position</label>
+          <input type="text" id="ch-bp" value="17">
+        </div>
+        <div class="form-group">
+          <label>Body Height</label>
+          <input type="text" id="ch-bh" value="2mm">
+        </div>
+        <div class="form-group">
+          <label>Wing Height</label>
+          <input type="text" id="ch-wh" value="10">
+        </div>
+        <div class="form-group">
+          <label>Wing Angle (°)</label>
+          <input type="number" id="ch-wa" value="0">
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="ch-ad"> Aero Disk</label>
+        </div>
+        <div class="form-group">
+          <label>Internal Ratio</label>
+          <input type="text" id="ch-ir" value="3.31:1">
+        </div>
+        <div class="form-group">
+          <label>Arm Mount Fram</label>
+          <input type="text" id="ch-arm-f" value="A">
+        </div>
+        <div class="form-group">
+          <label>Arm Mount Bak</label>
+          <input type="text" id="ch-arm-r" value="D">
+        </div>
+        <div class="form-group">
+          <label>Chassi Anteckningar</label>
+          <textarea id="ch-notes"></textarea>
+        </div>
+      </div>
+
+      <!-- Electronics Section -->
+      <div class="spec-table">
+        <h3>⚡ Elektronik</h3>
+        <div class="form-group">
+          <label>Motor</label>
+          <input type="text" id="el-motor" value="Hobbywing 1900KV">
+        </div>
+        <div class="form-group">
+          <label>Motor Timing</label>
+          <input type="text" id="el-motor-timing" value="0°">
+        </div>
+        <div class="form-group">
+          <label>Servo</label>
+          <input type="text" id="el-servo" value="Savox 1252MG">
+        </div>
+        <div class="form-group">
+          <label>Receiver</label>
+          <input type="text" id="el-rx" value="Sanwa RX-482">
+        </div>
+        <div class="form-group">
+          <label>Batteri</label>
+          <input type="text" id="el-batt" value="2S 6000mAh 100C">
+        </div>
+      </div>
+
+      <!-- Tires Section -->
+      <div class="spec-table">
+        <h3>🛞 Däck</h3>
+        <div class="form-group">
+          <label>Märke</label>
+          <input type="text" id="tire-brand" value="Pro-Line">
+        </div>
+        <div class="form-group">
+          <label>Modell</label>
+          <input type="text" id="tire-model" value="Blockade">
+        </div>
+        <div class="form-group">
+          <label>Compound</label>
+          <input type="text" id="tire-compound" value="M3">
+        </div>
+        <div class="form-group">
+          <label>Insert</label>
+          <input type="text" id="tire-insert" value="Closed Cell">
+        </div>
+        <div class="form-group">
+          <label>Lim-status</label>
+          <select id="tire-glue">
+            <option value="Fresh" selected>Fresh</option>
+            <option value="OK">OK</option>
+            <option value="Old">Old</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Slitage</label>
+          <select id="tire-wear">
+            <option value="Nya" selected>Nya</option>
+            <option value="Lite">Lite</option>
+            <option value="Mycket">Mycket</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Däck Anteckningar</label>
+          <textarea id="tire-notes"></textarea>
+        </div>
+      </div>
+
+      <!-- Rating -->
+      <div class="form-group">
+        <label>Betyg</label>
+        <div class="rating-input">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" id="setup-rating" value="3">
+      </div>
+
+      <!-- Photos -->
+      <div class="form-group">
+        <label>Bilder</label>
+        <input type="file" id="photo-input" accept="image/*" multiple>
+        <div id="setup-photos" class="photo-grid"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">Spara Setup</button>
+      <button type="button" class="btn btn-secondary btn-full" onclick="resetCurrentSetup()">🔄 Återställ till grundvärden</button>
+      <button type="button" class="btn btn-secondary btn-full" onclick="importESCConfig()" style="margin-top:8px;background:var(--success);color:var(--bg);">📥 Importera ESC Config</button>
+      <input type="file" id="esc-config-input" accept=".txt,.config,.esc" class="hidden" onchange="handleESCConfigImport(this)">
+    </form>
+  </div>
+
+  <!-- Setup Detail -->
+  <div id="view-setup-detail" class="view hidden">
+    <div id="setup-detail-content"></div>
+  </div>
+
+  <!-- All Setups -->
+  <div id="view-all-setups" class="view hidden">
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <input type="text" id="setup-search" placeholder="Sök setups..." style="flex:1;">
+      <select id="setup-filter">
+        <option value="">Alla</option>
+        <option value="favorites">Favoriter</option>
+        <option value="best">Bäst betyg</option>
+        <option value="recent">Senaste</option>
+      </select>
+    </div>
+    <div id="all-setups-list"></div>
+  </div>
+
+  <!-- Compare -->
+  <div id="view-compare" class="view hidden">
+    <div class="form-group">
+      <label>Modell</label>
+      <select id="compare-model"><option>Välj modell...</option></select>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <select id="compare-setup-1" style="flex:1;"><option>Setup 1...</option></select>
+      <select id="compare-setup-2" style="flex:1;"><option>Setup 2...</option></select>
+    </div>
+    <div id="compare-results"></div>
+  </div>
+
+  <!-- Tracks -->
+  <div id="view-tracks" class="view hidden">
+    <div id="tracks-list"></div>
+    <div id="tracks-empty" class="empty-state hidden">
+      <div class="empty-icon">🏁</div>
+      <p>Inga banor än. Lägg till din första!</p>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="showView('add-track')">+ Ny Bana</button>
+  </div>
+
+  <!-- Add Track -->
+  <div id="view-add-track" class="view hidden">
+    <form id="form-add-track">
+      <div class="form-group">
+        <label>Namn</label>
+        <input type="text" id="track-name" required>
+      </div>
+      <div class="form-group">
+        <label>Plats</label>
+        <input type="text" id="track-location">
+      </div>
+      <div class="form-group">
+        <label>Yta</label>
+        <select id="track-surface">
+          <option value="Asphalt">Asfalt</option>
+          <option value="Carpet">Matta</option>
+          <option value="Dirt">Dirt</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Anteckningar</label>
+        <textarea id="track-notes"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Spara Bana</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// ===== RC Setup Tracker =====
+// LocalStorage data layer + SPA router
+
+const DB = {
+  get(key) {
+    try { return JSON.parse(localStorage.getItem('rc_' + key) || '[]'); }
+    catch { return []; }
+  },
+  set(key, val) { localStorage.setItem('rc_' + key, JSON.stringify(val)); },
+  uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
+};
+
+let currentModelId = null;
+let currentSetupId = null;
+let tempPhotos = [];
+
+// ===== STATE =====
+function loadState() {
+  if (DB.get('models').length === 0) {
+    seedData();
+  }
+  updateStats();
+}
+
+function seedData() {
+  const model1 = {
+    id: DB.uid(),
+    name: 'RX8E 2026',
+    brand: 'XRAY',
+    type: 'On-Road',
+    setupSheet: 'images/setup-rx8e-2026.jpg',
+    dateAdded: new Date().toISOString()
+  };
+  const model2 = {
+    id: DB.uid(),
+    name: 'X4 2025',
+    brand: 'XRAY',
+    type: 'On-Road',
+    setupSheet: 'images/setup-x4-asphalt.jpg',
+    dateAdded: new Date().toISOString()
+  };
+  
+  // RX8E Basic Setup med alla nya ESC-fält
+  const setup1 = {
+    id: DB.uid(), modelId: model1.id,
+    name: 'RX8E Basic Setup 2026',
+    date: new Date().toISOString(),
+    trackId: '',
+    notes: 'Grundsetup för RX8E 2026 enligt officiell setup sheet.',
+    isFavorite: true, performanceRating: 4,
+    
+    // Alla 34 ESC-parametrar från fil
+    escRunningMode: 'Forward/Brake',
+    escMaxReverseForce: 25,
+    escCutoffVoltage: 'Auto (3.5V/cell)',
+    escThermalProtection: true,
+    escMotorThermalProtection: true,
+    escBECVoltage: '7.4V',
+    escRemoteOff: false,
+    escSensorMode: 'Full Sensored',
+    escMotorRotation: 'CCW',
+    escPhaseACSwap: false,
+    escPunchSWPoint: 30,
+    escPunchRate1Start: 30,
+    escPunchRate2End: 30,
+    escPunchLine: 'Linear',
+    escNeutralRange: 6,
+    escInitialThrottleForce: 3,
+    escCoast: 0,
+    escSofteningValue: 20,
+    escSofteningRange: 30,
+    escPWMDriveFreq: '4K',
+    escBrakeControl: 'Hard Brake',
+    escDragBrake: 12,
+    escMaxBrakeForce: 70,
+    escInitialBrakeForce: 'Drag Brake',
+    escBrakeRateControl: 20,
+    escBrakeFrequency: '2K',
+    escBoostTiming: 16,
+    escBoostStartRPM: 3000,
+    escBoostEndRPM: 25000,
+    escBoostControl: 'Auto',
+    escTurboTiming: 38,
+    escTurboDelay: '0.1s',
+    escTurboIncreaseRate: '18deg/0.1s',
+    escTurboDecreaseRate: '21deg/0.1s',
+    escNotes: 'Stock ESC settings from config file',
+    
+    // Chassi
+    chRhF: 8.0, chRhR: 9.0,
+    chCbF: -2.0, chCbR: -2.0,
+    chToF: 1.5, chToR: 3.0,
+    chCtF: 6.0, chCtR: 0,
+    chShF: '600', chShR: '600',
+    chShPosF: '2-DOT KIT', chShPosR: '3',
+    chSpF: '5.6', chSpR: '5.0',
+    chDfF: '7000', chDfR: '3000', chDfC: '10000',
+    chArF: false, chArR: false,
+    chBp: '17', chBh: '2mm',
+    chWh: '10', chWa: 0,
+    chAd: false,
+    chIr: '3.31:1', chFr: '',
+    chArmF: 'A', chArmR: 'D',
+    chSp: 'Rear', chCb: 'NO',
+    chSat: 'Standard', chSt: 'Graphite',
+    chNotes: 'RX8E 2026 Basic Setup',
+    
+    // Elektronik
+    elMotor: 'Hobbywing 1900KV',
+    elMotorTiming: '0°',
+    elServo: 'Savox 1252MG',
+    elRx: 'Sanwa RX-482',
+    elBatt: '2S 6000mAh 100C',
+    
+    // Däck
+    tireBrand: 'Pro-Line',
+    tireModel: 'Blockade',
+    tireCompound: 'M3',
+    tireInsert: 'Closed Cell',
+    tireGlue: 'Fresh',
+    tireWear: 'Nya',
+    tireNotes: 'Pro-Line Blockade M3 compound',
+    
+    photos: []
+  };
+  
+  const setup2 = {
+    id: DB.uid(), modelId: model2.id,
+    name: 'X4 Basic Asfalt',
+    date: new Date().toISOString(),
+    trackId: '',
+    notes: 'Grundsetup för asfalt',
+    isFavorite: true, performanceRating: 4,
+    
+    // ESC defaults
+    escRunningMode: 'Forward/Brake',
+    escMaxReverseForce: 25,
+    escCutoffVoltage: 'Auto (3.5V/cell)',
+    escThermalProtection: true,
+    escMotorThermalProtection: true,
+    escBECVoltage: '7.4V',
+    escRemoteOff: false,
+    escSensorMode: 'Full Sensored',
+    escMotorRotation: 'CCW',
+    escPhaseACSwap: false,
+    escPunchSWPoint: 30,
+    escPunchRate1Start: 30,
+    escPunchRate2End: 30,
+    escPunchLine: 'Linear',
+    escNeutralRange: 6,
+    escInitialThrottleForce: 3,
+    escCoast: 0,
+    escSofteningValue: 20,
+    escSofteningRange: 30,
+    escPWMDriveFreq: '4K',
+    escBrakeControl: 'Hard Brake',
+    escDragBrake: 12,
+    escMaxBrakeForce: 70,
+    escInitialBrakeForce: 'Drag Brake',
+    escBrakeRateControl: 20,
+    escBrakeFrequency: '2K',
+    escBoostTiming: 16,
+    escBoostStartRPM: 3000,
+    escBoostEndRPM: 25000,
+    escBoostControl: 'Auto',
+    escTurboTiming: 38,
+    escTurboDelay: '0.1s',
+    escTurboIncreaseRate: '18deg/0.1s',
+    escTurboDecreaseRate: '21deg/0.1s',
+    escNotes: 'Stock settings',
+    
+    chRhF: 5.2, chRhR: 5.4,
+    chCbF: -2.0, chCbR: -2.0,
+    chToF: 0.0, chToR: 2.0,
+    chShF: '350', chShR: '350',
+    chSpF: '2.5-2.8', chSpR: '2.6',
+    chDfF: '7000', chDfR: '3000', chDfC: '10000',
+    chArF: true, chArR: true,
+    chNotes: 'Basic asphalt setup',
+    
+    tireBrand: 'HUDY',
+    tireModel: 'A1-36',
+    tireCompound: 'Red',
+    tireInsert: 'Closed Cell',
+    tireGlue: 'Fresh',
+    tireWear: 'Nya',
+    tireNotes: 'HUDY A1-36 Red compound',
+    
+    photos: []
+  };
+  
+  DB.set('models', [model1, model2]);
+  DB.set('setups', [setup1, setup2]);
+  DB.set('tracks', []);
+}
+
+// ===== NAVIGATION =====
+function showView(viewName) {
+  console.log('showView called:', viewName);
+  
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.add('hidden');
+    console.log('Hiding view:', v.id);
+  });
+  
+  const targetView = document.getElementById('view-' + viewName);
+  if (targetView) {
+    targetView.classList.remove('hidden');
+    console.log('Showing view:', 'view-' + viewName);
+  } else {
+    console.error('View not found:', 'view-' + viewName);
+    return;
+  }
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
+  if (navBtn) navBtn.classList.add('active');
+
+  const titleMap = {
+    'models': 'RC Setup Tracker',
+    'add-model': 'Ny Modell',
+    'model-detail': 'Modell',
+    'add-setup': 'Ny Setup',
+    'setup-detail': 'Setup',
+    'compare': 'Jämför',
+    'tracks': 'Banor',
+    'add-track': 'Ny Bana',
+    'all-setups': 'Alla Setups'
+  };
+  document.getElementById('page-title').textContent = titleMap[viewName] || 'RC Setup Tracker';
+
+  document.getElementById('back-btn').classList.toggle('hidden',
+    ['models','compare','tracks','all-setups'].includes(viewName));
+  document.getElementById('add-btn').classList.toggle('hidden',
+    viewName !== 'models');
+
+  if (viewName === 'models') renderModels();
+  if (viewName === 'all-setups') renderAllSetups();
+  if (viewName === 'tracks') renderTracks();
+  if (viewName === 'compare') initCompare();
+  if (viewName === 'model-detail') renderModelDetail(currentModelId);
+  if (viewName === 'setup-detail') renderSetupDetail(currentSetupId);
+  if (viewName === 'add-setup') initAddSetup();
+
+  window.scrollTo(0, 0);
+}
+
+document.getElementById('back-btn').onclick = () => {
+  const view = document.querySelector('.view:not(.hidden)').id.replace('view-', '');
+  const backMap = {
+    'add-model': 'models',
+    'model-detail': 'models',
+    'add-setup': 'model-detail',
+    'setup-detail': 'model-detail',
+    'add-track': 'tracks'
+  };
+  showView(backMap[view] || 'models');
+};
+
+document.getElementById('add-btn').onclick = () => showView('add-model');
+
+// ===== MODELS =====
+function renderModels() {
+  const models = DB.get('models').sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+  const setups = DB.get('setups');
+  const list = document.getElementById('models-list');
+  const empty = document.getElementById('models-empty');
+
+  if (!models.length) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = models.map(m => {
+    const count = setups.filter(s => s.modelId === m.id).length;
+    return `
+      <div class="card" onclick="openModel('${m.id}')">
+        <div class="card-row">
+          <div class="card-icon">🚗</div>
+          <div class="card-body">
+            <div class="card-title">${esc(m.name)}</div>
+            <div class="card-subtitle">${esc(m.brand)} · ${esc(m.type)}</div>
+            ${count ? `<div class="card-badge">${count} setup${count > 1 ? 's' : ''}</div>` : ''}
+          </div>
+          <div class="card-chevron">›</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openModel(id) {
+  currentModelId = id;
+  showView('model-detail');
+}
+
+document.getElementById('form-add-model').onsubmit = (e) => {
+  e.preventDefault();
+  const model = {
+    id: DB.uid(),
+    name: document.getElementById('model-name').value.trim(),
+    brand: document.getElementById('model-brand').value.trim(),
+    type: document.getElementById('model-type').value,
+    dateAdded: new Date().toISOString()
+  };
+  DB.set('models', [...DB.get('models'), model]);
+  document.getElementById('form-add-model').reset();
+  showView('models');
+  updateStats();
+};
+
+// ===== MODEL DETAIL =====
+function renderModelDetail(id) {
+  const models = DB.get('models');
+  const model = models.find(m => m.id === id);
+  if (!model) return showView('models');
+
+  const setups = DB.get('setups').filter(s => s.modelId === id).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  document.getElementById('model-info-card').innerHTML = `
+    <div class="card-row">
+      <div class="card-icon">🚗</div>
+      <div class="card-body">
+        <div class="card-title">${esc(model.name)}</div>
+        <div class="card-subtitle">${esc(model.brand)} · ${esc(model.type)}</div>
+        <div class="card-badge">${setups.length} setup${setups.length !== 1 ? 's' : ''}</div>
+      </div>
+    </div>
+    ${model.setupSheet ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);"><img src="${esc(model.setupSheet)}" style="width:100%;border-radius:8px;cursor:pointer;" onclick="window.open('${esc(model.setupSheet)}','_blank')"><div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;text-align:center;">Setup Sheet - klicka för full storlek</div></div>` : ''}
+    <div style="margin-top:12px;">
+      <button type="button" class="btn btn-secondary btn-full" onclick="document.getElementById('setup-sheet-input').click()">${model.setupSheet ? '🖼️ Byt Setup Sheet' : '🖼️ Lägg till Setup Sheet'}</button>
+      <input type="file" id="setup-sheet-input" accept="image/*" class="hidden" onchange="handleSetupSheetUpload(this,'${model.id}')">
+    </div>
+  `;
+
+  const list = document.getElementById('setups-list');
+  const empty = document.getElementById('setups-empty');
+  document.getElementById('setup-count-badge').textContent = setups.length;
+
+  if (!setups.length) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+  } else {
+    empty.classList.add('hidden');
+    list.innerHTML = setups.map(s => setupRowHTML(s, true)).join('');
+  }
+}
+
+function setupRowHTML(s, withModel) {
+  const track = DB.get('tracks').find(t => t.id === s.trackId);
+  return `
+    <div class="card" onclick="openSetup('${s.id}')">
+      <div class="card-row">
+        <div style="width:14px;height:14px;border-radius:50%;background:${getRatingColor(s.performanceRating)};flex-shrink:0;margin-top:4px;"></div>
+        <div class="card-body">
+          <div class="card-title">${esc(s.name)}</div>
+          ${withModel ? '' : `<div class="card-subtitle">${esc(s.modelBrand || '')} ${esc(s.modelName || '')}</div>`}
+          <div style="display:flex;gap:12px;margin-top:4px;">
+            <span style="font-size:0.75rem;color:var(--text-muted);">${fmtDate(s.date)}</span>
+            ${s.isFavorite ? '⭐' : ''}
+            ${track ? `<span style="font-size:0.75rem;color:var(--accent);">🏁 ${esc(track.name)}</span>` : ''}
+          </div>
+        </div>
+        <div class="card-chevron">›</div>
+      </div>
+    </div>
+  `;
+}
+
+function getRatingColor(r) {
+  return ['#f44336','#f44336','#ff9800','#ffc107','#4caf50'][r - 1] || '#888';
+}
+
+function openSetup(id) {
+  currentSetupId = id;
+  showView('setup-detail');
+}
+
+// ===== SETUP SHEET UPLOAD =====
+function handleSetupSheetUpload(input, modelId) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    const models = DB.get('models');
+    const model = models.find(m => m.id === modelId);
+    if (model) {
+      model.setupSheet = dataUrl;
+      DB.set('models', models);
+      renderModelDetail(modelId);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' });
+}
+
+// ===== SETUP DETAIL =====
+function renderSetupDetail(id) {
+  const s = DB.get('setups').find(x => x.id === id);
+  if (!s) return showView('models');
+  const model = DB.get('models').find(m => m.id === s.modelId);
+  const track = DB.get('tracks').find(t => t.id === s.trackId);
+  const labels = { 5: 'Perfekt', 4: 'Bra', 3: 'OK', 2: 'Justera', 1: 'Dålig' };
+  const rClass = `r${s.performanceRating}`;
+
+  document.getElementById('setup-detail-content').innerHTML = `
+    <div class="setup-detail-header">
+      <h2>${esc(s.name)}</h2>
+      <div class="setup-meta">
+        <span>📅 ${fmtDate(s.date)}</span>
+        ${model ? `<span>🚗 ${esc(model.brand)} ${esc(model.name)}</span>` : ''}
+        ${track ? `<span>🏁 ${esc(track.name)}</span>` : ''}
+        ${s.isFavorite ? '<span>⭐ Favorit</span>' : ''}
+      </div>
+      <div class="rating-badge ${rClass}">${s.performanceRating}/5 — ${labels[s.performanceRating]}</div>
+      ${s.notes ? `<p style="margin-top:12px;color:var(--text-muted);font-size:0.9rem;">${esc(s.notes)}</p>` : ''}
+    </div>
+
+    ${s.photos && s.photos.length ? `
+      <div class="spec-table">
+        <h3>📸 Bilder</h3>
+        <div class="photo-grid">${s.photos.map(p => `<img src="${p}" class="photo-thumb">`).join('')}</div>
+      </div>
+    ` : ''}
+
+    ${specTable('⚡ ESC Inställningar', [
+      ['Running Mode', s.escRunningMode || '-'],
+      ['Max Reverse Force', (s.escMaxReverseForce || '-') + '%'],
+      ['Cutoff Voltage', s.escCutoffVoltage || '-'],
+      ['ESC Thermal Protection', s.escThermalProtection ? 'Ja' : 'Nej'],
+      ['Motor Thermal Protection', s.escMotorThermalProtection ? 'Ja' : 'Nej'],
+      ['BEC Voltage', s.escBECVoltage || '-'],
+      ['Remote Off', s.escRemoteOff ? 'Ja' : 'Nej'],
+      ['Sensor Mode', s.escSensorMode || '-'],
+      ['Motor Rotation', s.escMotorRotation || '-'],
+      ['Phase-AC Swap', s.escPhaseACSwap ? 'Ja' : 'Nej'],
+      ['Punch SW Point', (s.escPunchSWPoint || '-') + '%'],
+      ['Punch Rate1 Start', s.escPunchRate1Start || '-'],
+      ['Punch Rate2 End', s.escPunchRate2End || '-'],
+      ['Punch Line', s.escPunchLine || '-'],
+      ['Neutral Range', (s.escNeutralRange || '-') + '%'],
+      ['Initial Throttle Force', (s.escInitialThrottleForce || '-') + '%'],
+      ['Coast', (s.escCoast || '-') + '%'],
+      ['Softening Value', (s.escSofteningValue || '-') + '%'],
+      ['Softening Range', (s.escSofteningRange || '-') + '%'],
+      ['PWM Drive Freq', s.escPWMDriveFreq || '-'],
+      ['Brake Control', s.escBrakeControl || '-'],
+      ['Drag Brake', (s.escDragBrake || '-') + '%'],
+      ['Max Brake Force', (s.escMaxBrakeForce || '-') + '%'],
+      ['Initial Brake Force', s.escInitialBrakeForce || '-'],
+      ['Brake Rate Control', s.escBrakeRateControl || '-'],
+      ['Brake Frequency', s.escBrakeFrequency || '-'],
+      ['Boost Timing', (s.escBoostTiming || '-') + '°'],
+      ['Boost Start RPM', (s.escBoostStartRPM || '-') + ' RPM'],
+      ['Boost End RPM', (s.escBoostEndRPM || '-') + ' RPM'],
+      ['Boost Control', s.escBoostControl || '-'],
+      ['Turbo Timing', (s.escTurboTiming || '-') + '°'],
+      ['Turbo Delay', s.escTurboDelay || '-'],
+      ['Turbo Increase Rate', s.escTurboIncreaseRate || '-'],
+      ['Turbo Decrease Rate', s.escTurboDecreaseRate || '-'],
+      ['Anteckningar', s.escNotes || '-']
+    ])}
+
+    ${specTable('🔧 Chassi', [
+      ['Ride Height Fram', s.chRhF + ' mm'], ['Ride Height Bak', s.chRhR + ' mm'],
+      ['Camber Fram', s.chCbF + '°'], ['Camber Bak', s.chCbR + '°'],
+      ['Toe Fram', s.chToF + '°'], ['Toe Bak', s.chToR + '°'],
+      ['Caster Fram', (s.chCtF || '-') + '°'], ['Caster Bak', (s.chCtR || '-') + '°'],
+      ['Shock Oil Fram', s.chShF], ['Shock Oil Bak', s.chShR],
+      ['Shock Pos Fram', s.chShPosF || '-'], ['Shock Pos Bak', s.chShPosR || '-'],
+      ['Spring Fram', s.chSpF], ['Spring Bak', s.chSpR],
+      ['Diff Fram', s.chDfF], ['Diff Bak', s.chDfR], ['Diff Center', s.chDfC],
+      ['Anti-Roll Fram', s.chArF ? 'Ja' : 'Nej'], ['Anti-Roll Bak', s.chArR ? 'Ja' : 'Nej'],
+      ['Body Position', s.chBp || '-'], ['Body Height', s.chBh || '-'],
+      ['Wing Height', s.chWh || '-'], ['Wing Angle', (s.chWa || '-') + '°'],
+      ['Aero Disk', s.chAd ? 'Ja' : 'Nej'],
+      ['Internal Ratio', s.chIr || '-'], ['Final Ratio', s.chFr || '-'],
+      ['Arm Mount Fram', s.chArmF || '-'], ['Arm Mount Bak', s.chArmR || '-'],
+      ['Anteckningar', s.chNotes || '-']
+    ])}
+
+    ${specTable('⚡ Elektronik', [
+      ['Motor', s.elMotor || '-'], ['Motor Timing', s.elMotorTiming || '-'],
+      ['Servo', s.elServo || '-'], ['Receiver', s.elRx || '-'],
+      ['Batteri', s.elBatt || '-']
+    ])}
+
+    ${specTable('🏁 Körning', [
+      ['Varv', s.rtLaps || '-'], ['Bästa varv', s.rtBest || '-'],
+      ['Total tid', s.rtTotal || '-'], ['Kvalposition', s.rtQual || '-'],
+      ['Slutposition', s.rtFinal || '-']
+    ])}
+
+    ${specTable('🌡️ Förhållanden', [
+      ['Bantemp', (s.trTemp || '-') + '°C'], ['Lufttemp', (s.trAir || '-') + '°C'],
+      ['Luftfuktighet', (s.trHum || '-') + '%']
+    ])}
+
+    ${specTable('🛞 Däck', [
+      ['Märke', s.tireBrand || '-'], ['Modell', s.tireModel || '-'],
+      ['Compound', s.tireCompound || '-'], ['Insert', s.tireInsert || '-'],
+      ['Lim-status', s.tireGlue || '-'], ['Slitage', s.tireWear || '-'],
+      ['Anteckningar', s.tireNotes || '-']
+    ])}
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="editSetup('${s.id}')">✏️ Redigera</button>
+      <button class="btn btn-danger" onclick="deleteSetup('${s.id}')">🗑️ Ta bort</button>
+    </div>
+    <div style="height:40px;"></div>
+  `;
+}
+
+function specTable(title, specs) {
+  const rows = specs.filter(([_, v]) => v !== '' && v !== undefined && v !== null && v !== '-')
+    .map(([k, v]) => `<div class="spec-row"><span class="spec-label">${esc(k)}</span><span class="spec-value">${esc(String(v))}</span></div>`).join('');
+  if (!rows) return '';
+  return `<div class="spec-table"><h3>${esc(title)}</h3>${rows}</div>`;
+}
+
+function deleteSetup(id) {
+  if (!confirm('Ta bort denna setup?')) return;
+  DB.set('setups', DB.get('setups').filter(s => s.id !== id));
+  showView('model-detail');
+  updateStats();
+}
+
+function editSetup(id) {
+  alert('Redigering kommer i nästa version! För nu, ta bort och skapa ny.');
+}
+
+// ===== ADD SETUP =====
+function initAddSetup() {
+  tempPhotos = [];
+  renderPhotoGrid();
+  loadTrackSelect('setup-track');
+  initStarRating();
+  
+  // Förfyll med RX8E-värden om RX8E är vald
+  const model = DB.get('models').find(m => m.id === currentModelId);
+  if (model && model.name.includes('RX8E')) {
+    resetToRX8EBasic();
+  }
+}
+
+function resetToRX8EBasic() {
+  // ESC - alla 34 parametrar från fil
+  document.getElementById('esc-running-mode').value = 'Forward/Brake';
+  document.getElementById('esc-max-reverse-force').value = '25';
+  document.getElementById('esc-cutoff-voltage').value = 'Auto (3.5V/cell)';
+  document.getElementById('esc-thermal-protection').checked = true;
+  document.getElementById('esc-motor-thermal-protection').checked = true;
+  document.getElementById('esc-bec-voltage').value = '7.4V';
+  document.getElementById('esc-remote-off').checked = false;
+  document.getElementById('esc-sensor-mode').value = 'Full Sensored';
+  document.getElementById('esc-motor-rotation').value = 'CCW';
+  document.getElementById('esc-phase-ac-swap').checked = false;
+  document.getElementById('esc-punch-sw-point').value = '30';
+  document.getElementById('esc-punch-rate1-start').value = '30';
+  document.getElementById('esc-punch-rate2-end').value = '30';
+  document.getElementById('esc-punch-line').value = 'Linear';
+  document.getElementById('esc-neutral-range').value = '6';
+  document.getElementById('esc-initial-throttle-force').value = '3';
+  document.getElementById('esc-coast').value = '0';
+  document.getElementById('esc-softening-value').value = '20';
+  document.getElementById('esc-softening-range').value = '30';
+  document.getElementById('esc-pwm-drive-freq').value = '4K';
+  document.getElementById('esc-brake-control').value = 'Hard Brake';
+  document.getElementById('esc-drag-brake').value = '12';
+  document.getElementById('esc-max-brake-force').value = '70';
+  document.getElementById('esc-initial-brake-force').value = 'Drag Brake';
+  document.getElementById('esc-brake-rate-control').value = '20';
+  document.getElementById('esc-brake-frequency').value = '2K';
+  document.getElementById('esc-boost-timing').value = '16';
+  document.getElementById('esc-boost-start-rpm').value = '3000';
+  document.getElementById('esc-boost-end-rpm').value = '25000';
+  document.getElementById('esc-boost-control').value = 'Auto';
+  document.getElementById('esc-turbo-timing').value = '38';
+  document.getElementById('esc-turbo-delay').value = '0.1s';
+  document.getElementById('esc-turbo-increase-rate').value = '18deg/0.1s';
+  document.getElementById('esc-turbo-decrease-rate').value = '21deg/0.1s';
+  document.getElementById('esc-notes').value = 'Stock ESC settings from config file';
+  
+  // Chassi
+  document.getElementById('ch-rh-f').value = '8.0';
+  document.getElementById('ch-rh-r').value = '9.0';
+  document.getElementById('ch-cb-f').value = '-2.0';
+  document.getElementById('ch-cb-r').value = '-2.0';
+  document.getElementById('ch-to-f').value = '1.5';
+  document.getElementById('ch-to-r').value = '3.0';
+  document.getElementById('ch-ct-f').value = '6.0';
+  document.getElementById('ch-sh-f').value = '600';
+  document.getElementById('ch-sh-r').value = '600';
+  document.getElementById('ch-sh-pos-f').value = '2-DOT KIT';
+  document.getElementById('ch-sh-pos-r').value = '3';
+  document.getElementById('ch-sp-f').value = '5.6';
+  document.getElementById('ch-sp-r').value = '5.0';
+  document.getElementById('ch-df-f').value = '7000';
+  document.getElementById('ch-df-r').value = '3000';
+  document.getElementById('ch-df-c').value = '10000';
+  document.getElementById('ch-ar-f').checked = false;
+  document.getElementById('ch-ar-r').checked = false;
+  document.getElementById('ch-bp').value = '17';
+  document.getElementById('ch-bh').value = '2mm';
+  document.getElementById('ch-wh').value = '10';
+  document.getElementById('ch-wa').value = '0';
+  document.getElementById('ch-ad').checked = false;
+  document.getElementById('ch-ir').value = '3.31:1';
+  document.getElementById('ch-arm-f').value = 'A';
+  document.getElementById('ch-arm-r').value = 'D';
+  document.getElementById('ch-notes').value = 'RX8E 2026 Basic Setup';
+  
+  // Elektronik
+  document.getElementById('el-motor').value = 'Hobbywing 1900KV';
+  document.getElementById('el-motor-timing').value = '0°';
+  document.getElementById('el-servo').value = 'Savox 1252MG';
+  document.getElementById('el-rx').value = 'Sanwa RX-482';
+  document.getElementById('el-batt').value = '2S 6000mAh 100C';
+  
+  // Däck
+  document.getElementById('tire-brand').value = 'Pro-Line';
+  document.getElementById('tire-model').value = 'Blockade';
+  document.getElementById('tire-compound').value = 'M3';
+  document.getElementById('tire-insert').value = 'Closed Cell';
+  document.getElementById('tire-glue').value = 'Fresh';
+  document.getElementById('tire-wear').value = 'Nya';
+  document.getElementById('tire-notes').value = 'Pro-Line Blockade M3 compound';
+  
+  // Rating
+  document.getElementById('setup-rating').value = '4';
+  document.querySelectorAll('.rating-input .star').forEach((s, i) => s.classList.toggle('active', i < 4));
+}
+
+function resetCurrentSetup() {
+  if (!confirm('Återställa alla fält till RX8E Basic värden?')) return;
+  resetToRX8EBasic();
+}
+
+window.resetCurrentSetup = resetCurrentSetup;
+
+function loadTrackSelect(id) {
+  const sel = document.getElementById(id);
+  const tracks = DB.get('tracks');
+  sel.innerHTML = '<option value="">Välj bana...</option>' +
+    tracks.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+}
+
+function initStarRating() {
+  document.querySelectorAll('.rating-input .star').forEach(star => {
+    star.onclick = () => {
+      const val = parseInt(star.dataset.value);
+      document.getElementById('setup-rating').value = val;
+      document.querySelectorAll('.rating-input .star').forEach((s, i) => {
+        s.classList.toggle('active', i < val);
+      });
+    };
+  });
+  document.querySelectorAll('.rating-input .star').forEach((s, i) => s.classList.toggle('active', i < 4));
+}
+
+// Photo handling
+document.getElementById('photo-input').onchange = function(e) {
+  [...e.target.files].forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      tempPhotos.push(ev.target.result);
+      renderPhotoGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('setup-photos');
+  if (!tempPhotos.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = tempPhotos.map((p, i) => `
+    <div style="position:relative;">
+      <img src="${p}" class="photo-thumb">
+      <button onclick="removePhoto(${i})" style="position:absolute;top:-4px;right:-4px;background:#f44336;color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;">×</button>
+    </div>
+  `).join('');
+}
+
+window.removePhoto = (i) => { tempPhotos.splice(i, 1); renderPhotoGrid(); };
+
+// Submit setup
+document.getElementById('form-add-setup').onsubmit = (e) => {
+  e.preventDefault();
+  const model = DB.get('models').find(m => m.id === currentModelId);
+  if (!model) return;
+
+  const setup = {
+    id: DB.uid(), modelId: currentModelId,
+    name: document.getElementById('setup-name').value.trim(),
+    date: new Date().toISOString(),
+    trackId: document.getElementById('setup-track').value,
+    notes: document.getElementById('setup-notes').value.trim(),
+    isFavorite: false,
+    performanceRating: parseInt(document.getElementById('setup-rating').value) || 3,
+    photos: [...tempPhotos],
+    
+    // Alla 34 ESC-parametrar
+    escRunningMode: document.getElementById('esc-running-mode').value,
+    escMaxReverseForce: parseInt(document.getElementById('esc-max-reverse-force').value) || 25,
+    escCutoffVoltage: document.getElementById('esc-cutoff-voltage').value,
+    escThermalProtection: document.getElementById('esc-thermal-protection').checked,
+    escMotorThermalProtection: document.getElementById('esc-motor-thermal-protection').checked,
+    escBECVoltage: document.getElementById('esc-bec-voltage').value,
+    escRemoteOff: document.getElementById('esc-remote-off').checked,
+    escSensorMode: document.getElementById('esc-sensor-mode').value,
+    escMotorRotation: document.getElementById('esc-motor-rotation').value,
+    escPhaseACSwap: document.getElementById('esc-phase-ac-swap').checked,
+    escPunchSWPoint: parseInt(document.getElementById('esc-punch-sw-point').value) || 30,
+    escPunchRate1Start: parseInt(document.getElementById('esc-punch-rate1-start').value) || 30,
+    escPunchRate2End: parseInt(document.getElementById('esc-punch-rate2-end').value) || 30,
+    escPunchLine: document.getElementById('esc-punch-line').value,
+    escNeutralRange: parseInt(document.getElementById('esc-neutral-range').value) || 6,
+    escInitialThrottleForce: parseInt(document.getElementById('esc-initial-throttle-force').value) || 3,
+    escCoast: parseInt(document.getElementById('esc-coast').value) || 0,
+    escSofteningValue: parseInt(document.getElementById('esc-softening-value').value) || 20,
+    escSofteningRange: parseInt(document.getElementById('esc-softening-range').value) || 30,
+    escPWMDriveFreq: document.getElementById('esc-pwm-drive-freq').value,
+    escBrakeControl: document.getElementById('esc-brake-control').value,
+    escDragBrake: parseInt(document.getElementById('esc-drag-brake').value) || 12,
+    escMaxBrakeForce: parseInt(document.getElementById('esc-max-brake-force').value) || 70,
+    escInitialBrakeForce: document.getElementById('esc-initial-brake-force').value,
+    escBrakeRateControl: parseInt(document.getElementById('esc-brake-rate-control').value) || 20,
+    escBrakeFrequency: document.getElementById('esc-brake-frequency').value,
+    escBoostTiming: parseInt(document.getElementById('esc-boost-timing').value) || 16,
+    escBoostStartRPM: parseInt(document.getElementById('esc-boost-start-rpm').value) || 3000,
+    escBoostEndRPM: parseInt(document.getElementById('esc-boost-end-rpm').value) || 25000,
+    escBoostControl: document.getElementById('esc-boost-control').value,
+    escTurboTiming: parseInt(document.getElementById('esc-turbo-timing').value) || 38,
+    escTurboDelay: document.getElementById('esc-turbo-delay').value,
+    escTurboIncreaseRate: document.getElementById('esc-turbo-increase-rate').value,
+    escTurboDecreaseRate: document.getElementById('esc-turbo-decrease-rate').value,
+    escNotes: document.getElementById('esc-notes').value.trim(),
+    
+    // Chassi
+    chRhF: parseFloat(document.getElementById('ch-rh-f').value) || 0,
+    chRhR: parseFloat(document.getElementById('ch-rh-r').value) || 0,
+    chCbF: parseFloat(document.getElementById('ch-cb-f').value) || 0,
+    chCbR: parseFloat(document.getElementById('ch-cb-r').value) || 0,
+    chToF: parseFloat(document.getElementById('ch-to-f').value) || 0,
+    chToR: parseFloat(document.getElementById('ch-to-r').value) || 0,
+    chCtF: parseFloat(document.getElementById('ch-ct-f').value) || 0,
+    chShF: document.getElementById('ch-sh-f').value.trim(),
+    chShR: document.getElementById('ch-sh-r').value.trim(),
+    chShPosF: document.getElementById('ch-sh-pos-f').value.trim(),
+    chShPosR: document.getElementById('ch-sh-pos-r').value.trim(),
+    chSpF: document.getElementById('ch-sp-f').value.trim(),
+    chSpR: document.getElementById('ch-sp-r').value.trim(),
+    chDfF: document.getElementById('ch-df-f').value.trim(),
+    chDfR: document.getElementById('ch-df-r').value.trim(),
+    chDfC: document.getElementById('ch-df-c').value.trim(),
+    chArF: document.getElementById('ch-ar-f').checked,
+    chArR: document.getElementById('ch-ar-r').checked,
+    chBp: document.getElementById('ch-bp').value.trim(),
+    chBh: document.getElementById('ch-bh').value.trim(),
+    chWh: document.getElementById('ch-wh').value.trim(),
+    chWa: parseFloat(document.getElementById('ch-wa').value) || 0,
+    chAd: document.getElementById('ch-ad').checked,
+    chIr: document.getElementById('ch-ir').value.trim(),
+    chFr: document.getElementById('ch-fr').value.trim(),
+    chArmF: document.getElementById('ch-arm-f').value.trim(),
+    chArmR: document.getElementById('ch-arm-r').value.trim(),
+    chNotes: document.getElementById('ch-notes').value.trim(),
+    
+    // Elektronik
+    elMotor: document.getElementById('el-motor').value.trim(),
+    elMotorTiming: document.getElementById('el-motor-timing').value.trim(),
+    elServo: document.getElementById('el-servo').value.trim(),
+    elRx: document.getElementById('el-rx').value.trim(),
+    elBatt: document.getElementById('el-batt').value.trim(),
+    
+    // Däck
+    tireBrand: document.getElementById('tire-brand').value.trim(),
+    tireModel: document.getElementById('tire-model').value.trim(),
+    tireCompound: document.getElementById('tire-compound').value.trim(),
+    tireInsert: document.getElementById('tire-insert').value.trim(),
+    tireGlue: document.getElementById('tire-glue').value,
+    tireWear: document.getElementById('tire-wear').value,
+    tireNotes: document.getElementById('tire-notes').value.trim()
+  };
+
+  DB.set('setups', [...DB.get('setups'), setup]);
+  document.getElementById('form-add-setup').reset();
+  tempPhotos = [];
+  renderPhotoGrid();
+  showView('model-detail');
+  updateStats();
+};
+
+window.showAddSetup = () => { showView('add-setup'); };
+
+// ===== ESC CONFIG IMPORT =====
+function importESCConfig() {
+  document.getElementById('esc-config-input').click();
+}
+
+function handleESCConfigImport(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const config = parseESCConfig(e.target.result);
+      applyESCConfig(config);
+      alert('ESC-konfiguration importerad framgångsrikt!');
+    } catch (err) {
+      alert('Fel vid import: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseESCConfig(text) {
+  const config = {};
+  const lines = text.split('\n');
+  
+  // Hitta enhetsinfo
+  const deviceMatch = text.match(/Device Type:\s*(.+)/);
+  const hwMatch = text.match(/硬件版本\.:\s*(.+)/);
+  const fwMatch = text.match(/Firmware Version:\s*(.+)/);
+  const modeMatch = text.match(/Mode:\s*(.+)/);
+  const nameMatch = text.match(/Name:\s*(.+)/);
+  
+  if (deviceMatch) config.deviceType = deviceMatch[1].trim();
+  if (hwMatch) config.hwVersion = hwMatch[1].trim();
+  if (fwMatch) config.fwVersion = fwMatch[1].trim();
+  if (modeMatch) config.mode = modeMatch[1].trim();
+  if (nameMatch) config.name = nameMatch[1].trim();
+  
+  // Parse numrerade inställningar
+  const settingRegex = /(\d+)\.\[([^\]]+)\]\s*\n\s*([^\n]+)\n\s*\(\*\)\(\+\)/g;
+  let match;
+  while ((match = settingRegex.exec(text)) !== null) {
+    const num = parseInt(match[1]);
+    const name = match[2].trim();
+    const value = match[3].trim();
+    config[name] = value;
+  }
+  
+  // Om regex inte fungerar, försök alternativ parsing
+  if (Object.keys(config).length <= 5) {
+    // Alternativ parsing för kinesiska filer
+    const altRegex = /(\d+)\.\[([^\]]+)\]\s*\n\s*([^\n]+)(?:\n\s*\(\*\)\(\+\))?/g;
+    while ((match = altRegex.exec(text)) !== null) {
+      const name = match[2].trim();
+      const value = match[3].trim();
+      config[name] = value;
+    }
+  }
+  
+  return config;
+}
+
+function applyESCConfig(config) {
+  // Mappa konfigurationsvärden till formulärfält
+  const mapping = {
+    'Running Mode': { field: 'esc-running-mode', type: 'select' },
+    'Max.ReverseForce': { field: 'esc-max-reverse-force', type: 'number' },
+    'Cutoff Voltage': { field: 'esc-cutoff-voltage', type: 'select' },
+    'ESC Thermal Protection': { field: 'esc-thermal-protection', type: 'checkbox' },
+    'Motor Thermal Protection': { field: 'esc-motor-thermal-protection', type: 'checkbox' },
+    'BEC Voltage': { field: 'esc-bec-voltage', type: 'select' },
+    'Remote Off': { field: 'esc-remote-off', type: 'checkbox' },
+    'Sensor Mode': { field: 'esc-sensor-mode', type: 'select' },
+    'Motor Rotation': { field: 'esc-motor-rotation', type: 'select' },
+    'Phase-AC Swap': { field: 'esc-phase-ac-swap', type: 'checkbox' },
+    'Punch SW Point': { field: 'esc-punch-sw-point', type: 'number' },
+    'Punch Rate1 Start': { field: 'esc-punch-rate1-start', type: 'number' },
+    'Punch Rate2 End': { field: 'esc-punch-rate2-end', type: 'number' },
+    'Punch Line': { field: 'esc-punch-line', type: 'select' },
+    'Neutral Range': { field: 'esc-neutral-range', type: 'select' },
+    'Initial Throttle Force': { field: 'esc-initial-throttle-force', type: 'number' },
+    'Coast': { field: 'esc-coast', type: 'number' },
+    'Softening Value': { field: 'esc-softening-value', type: 'number' },
+    'Softening Range': { field: 'esc-softening-range', type: 'number' },
+    'PWM Drive Freq': { field: 'esc-pwm-drive-freq', type: 'select' },
+    'Brake Control': { field: 'esc-brake-control', type: 'select' },
+    'Drag Brake': { field: 'esc-drag-brake', type: 'number' },
+    'Max.Brake Force': { field: 'esc-max-brake-force', type: 'number' },
+    'Initial Brake Force': { field: 'esc-initial-brake-force', type: 'select' },
+    'Brake Rate Control': { field: 'esc-brake-rate-control', type: 'number' },
+    'Brake Frequency': { field: 'esc-brake-frequency', type: 'select' },
+    'Boost Timing': { field: 'esc-boost-timing', type: 'number' },
+    'Boost Start RPM': { field: 'esc-boost-start-rpm', type: 'number' },
+    'Boost End RPM': { field: 'esc-boost-end-rpm', type: 'number' },
+    'Boost Control': { field: 'esc-boost-control', type: 'select' },
+    'Turbo Timing': { field: 'esc-turbo-timing', type: 'number' },
+    'Turbo Delay': { field: 'esc-turbo-delay', type: 'select' },
+    'Turbo Increase Rate': { field: 'esc-turbo-increase-rate', type: 'select' },
+    'Turbo Decrease Rate': { field: 'esc-turbo-decrease-rate', type: 'select' }
+  };
+  
+  // Värdemappningar för speciella fall
+  const valueMappings = {
+    'Running Mode': {
+      '正转带刹车': 'Forward/Brake',
+      '正反转带刹车': 'Forward/Reverse/Brake',
+      '直接正反转': 'Direct F/R'
+    },
+    'Cutoff Voltage': {
+      '不保护': 'No Protection',
+      '自动(3.5V/节)': 'Auto (3.5V/cell)'
+    },
+    'ESC Thermal Protection': {
+      '不保护': false,
+      '保护': true
+    },
+    'Motor Thermal Protection': {
+      '不保护': false,
+      '保护': true
+    },
+    'BEC Voltage': {
+      '6.0V': '6.0V',
+      '7.4V': '7.4V'
+    },
+    'Remote Off': {
+      '关闭': false,
+      '打开': true
+    },
+    'Sensor Mode': {
+      '全有感模式': 'Full Sensored',
+      '有感/无感混合模式': 'Hybrid'
+    },
+    'Motor Rotation': {
+      '逆时针': 'CCW',
+      '顺时针': 'CW'
+    },
+    'Phase-AC Swap': {
+      '关闭': false,
+      '打开': true
+    },
+    'Punch Line': {
+      '自定义': 'Custom',
+      '线性': 'Linear'
+    },
+    'PWM Drive Freq': {
+      '变频': 'Variable',
+      '4K': '4K'
+    },
+    'Brake Control': {
+      '重刹车': 'Hard Brake',
+      '缓刹车': 'Soft Brake'
+    },
+    'Initial Brake Force': {
+      '等于拖刹力度': 'Drag Brake',
+      'Drag Brake': 'Drag Brake'
+    },
+    'Brake Frequency': {
+      '变频': 'Variable',
+      '2K': '2K'
+    },
+    'Boost Control': {
+      '转速': 'RPM',
+      '自动': 'Auto'
+    },
+    'Turbo Delay': {
+      '立即执行': 'Immediate',
+      '0.1s': '0.1s'
+    },
+    'Turbo Increase Rate': {
+      '立即执行': 'Immediate',
+      '18deg/0.1s': '18deg/0.1s'
+    },
+    'Turbo Decrease Rate': {
+      '立即执行': 'Immediate',
+      '21deg/0.1s': '21deg/0.1s'
+    }
+  };
+  
+  // Applicera värden
+  for (const [configName, fieldInfo] of Object.entries(mapping)) {
+    const value = config[configName];
+    if (value === undefined) continue;
+    
+    const element = document.getElementById(fieldInfo.field);
+    if (!element) continue;
+    
+    // Hämta mappat värde om det finns
+    let mappedValue = value;
+    if (valueMappings[configName] && valueMappings[configName][value] !== undefined) {
+      mappedValue = valueMappings[configName][value];
+    }
+    
+    // Sätt värde baserat på fälttyp
+    if (fieldInfo.type === 'checkbox') {
+      element.checked = Boolean(mappedValue);
+    } else if (fieldInfo.type === 'number') {
+      // Extrahera numeriskt värde
+      const numMatch = String(mappedValue).match(/(\d+(?:\.\d+)?)/);
+      element.value = numMatch ? numMatch[1] : mappedValue;
+    } else {
+      element.value = mappedValue;
+    }
+  }
+  
+  // Uppdatera anteckningar med enhetsinfo
+  const notesField = document.getElementById('esc-notes');
+  if (notesField && config.deviceType) {
+    notesField.value = `Importerad från ${config.deviceType} ${config.name || ''} (FW: ${config.fwVersion || 'unknown'}, HW: ${config.hwVersion || 'unknown'})`;
+  }
+}
+
+window.importESCConfig = importESCConfig;
+window.handleESCConfigImport = handleESCConfigImport;
+
+// ===== ALL SETUPS =====
+function renderAllSetups() {
+  const filter = document.getElementById('setup-filter').value;
+  const search = document.getElementById('setup-search').value.toLowerCase();
+  let setups = DB.get('setups');
+
+  if (filter === 'favorites') setups = setups.filter(s => s.isFavorite);
+  if (filter === 'best') setups = setups.filter(s => s.performanceRating >= 4);
+  if (filter === 'recent') setups = setups.slice(0, 10);
+  if (search) setups = setups.filter(s =>
+    s.name.toLowerCase().includes(search) ||
+    (s.modelName && s.modelName.toLowerCase().includes(search)) ||
+    (s.modelBrand && s.modelBrand.toLowerCase().includes(search))
+  );
+
+  setups.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const models = DB.get('models');
+  setups = setups.map(s => {
+    const m = models.find(x => x.id === s.modelId);
+    return { ...s, modelName: m?.name, modelBrand: m?.brand };
+  });
+
+  const list = document.getElementById('all-setups-list');
+  if (!setups.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚙️</div><p>Inga setups hittades</p></div>`;
+    return;
+  }
+  list.innerHTML = setups.map(s => setupRowHTML(s, false)).join('');
+}
+
+document.getElementById('setup-search').oninput = renderAllSetups;
+document.getElementById('setup-filter').onchange = renderAllSetups;
+
+// ===== COMPARE =====
+function initCompare() {
+  const models = DB.get('models');
+  const sel = document.getElementById('compare-model');
+  sel.innerHTML = '<option>Välj modell...</option>' +
+    models.map(m => `<option value="${m.id}">${esc(m.name)}</option>`).join('');
+  sel.onchange = () => loadCompareSetups(sel.value);
+}
+
+function loadCompareSetups(modelId) {
+  const setups = DB.get('setups').filter(s => s.modelId === modelId);
+  const s1 = document.getElementById('compare-setup-1');
+  const s2 = document.getElementById('compare-setup-2');
+  const html = setups.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  s1.innerHTML = '<option>Setup 1...</option>' + html;
+  s2.innerHTML = '<option>Setup 2...</option>' + html;
+}
+
+function doCompare() {
+  const id1 = document.getElementById('compare-setup-1').value;
+  const id2 = document.getElementById('compare-setup-2').value;
+  if (!id1 || !id2 || id1 === id2) {
+    document.getElementById('compare-results').innerHTML = '<div class="empty-state"><p>Välj två olika setups</p></div>';
+    return;
+  }
+  const s1 = DB.get('setups').find(s => s.id === id1);
+  const s2 = DB.get('setups').find(s => s.id === id2);
+
+  const sections = [
+    { title: 'ESC', fields: [
+      ['Running Mode', 'escRunningMode'], ['Max Reverse Force', 'escMaxReverseForce'],
+      ['Cutoff Voltage', 'escCutoffVoltage'], ['BEC Voltage', 'escBECVoltage'],
+      ['Sensor Mode', 'escSensorMode'], ['Motor Rotation', 'escMotorRotation'],
+      ['Punch SW Point', 'escPunchSWPoint'], ['Punch Line', 'escPunchLine'],
+      ['Neutral Range', 'escNeutralRange'], ['PWM Drive Freq', 'escPWMDriveFreq'],
+      ['Brake Control', 'escBrakeControl'], ['Drag Brake', 'escDragBrake'],
+      ['Max Brake Force', 'escMaxBrakeForce'], ['Brake Frequency', 'escBrakeFrequency'],
+      ['Boost Timing', 'escBoostTiming'], ['Boost Start RPM', 'escBoostStartRPM'],
+      ['Boost End RPM', 'escBoostEndRPM'], ['Boost Control', 'escBoostControl'],
+      ['Turbo Timing', 'escTurboTiming'], ['Turbo Delay', 'escTurboDelay'],
+      ['Turbo Increase Rate', 'escTurboIncreaseRate'], ['Turbo Decrease Rate', 'escTurboDecreaseRate']
+    ]},
+    { title: 'Chassi', fields: [
+      ['Ride Height F', 'chRhF'], ['Ride Height B', 'chRhR'],
+      ['Camber F', 'chCbF'], ['Camber B', 'chCbR'],
+      ['Toe F', 'chToF'], ['Toe B', 'chToR'],
+      ['Shock F', 'chShF'], ['Shock B', 'chShR'],
+      ['Spring F', 'chSpF'], ['Spring B', 'chSpR'],
+      ['Diff F', 'chDfF'], ['Diff B', 'chDfR'], ['Diff C', 'chDfC'],
+      ['AR F', 'chArF'], ['AR B', 'chArR']
+    ]},
+    { title: 'Däck', fields: [
+      ['Märke', 'tireBrand'], ['Modell', 'tireModel'],
+      ['Compound', 'tireCompound'], ['Insert', 'tireInsert'],
+      ['Glue', 'tireGlue'], ['Wear', 'tireWear']
+    ]}
+  ];
+
+  let html = '';
+  sections.forEach(sec => {
+    const rows = sec.fields.map(([label, key]) => {
+      const v1 = String(s1[key] ?? '-');
+      const v2 = String(s2[key] ?? '-');
+      const diff = v1 !== v2 ? ' diff' : '';
+      return `<div class="compare-row${diff}">
+        <div><div class="compare-setup-name" style="color:var(--accent);">${esc(s1.name)}</div><div>${esc(v1)}</div></div>
+        <div style="text-align:right;"><div class="compare-setup-name" style="color:var(--accent-light);">${esc(s2.name)}</div><div>${esc(v2)}</div></div>
+      </div>`;
+    }).join('');
+    html += `<div class="compare-section"><h3>${esc(sec.title)}</h3>${rows}</div>`;
+  });
+
+  document.getElementById('compare-results').innerHTML = html;
+}
+
+document.getElementById('compare-setup-1').onchange = doCompare;
+document.getElementById('compare-setup-2').onchange = doCompare;
+
+// ===== TRACKS =====
+function renderTracks() {
+  const tracks = DB.get('tracks').sort((a, b) => a.name.localeCompare(b.name));
+  const list = document.getElementById('tracks-list');
+  const empty = document.getElementById('tracks-empty');
+
+  if (!tracks.length) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  list.innerHTML = tracks.map(t => {
+    const setupCount = DB.get('setups').filter(s => s.trackId === t.id).length;
+    return `
+      <div class="card">
+        <div class="card-row">
+          <div class="card-icon">🏁</div>
+          <div class="card-body">
+            <div class="card-title">${esc(t.name)}</div>
+            ${t.location ? `<div class="card-subtitle">${esc(t.location)}</div>` : ''}
+            ${t.surface ? `<div class="card-badge">${esc(t.surface)}</div>` : ''}
+          </div>
+          ${setupCount ? `<div style="font-size:0.75rem;color:var(--text-muted);padding:4px 10px;background:var(--bg-card-hover);border-radius:8px;">${setupCount}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Add track
+document.getElementById('form-add-track').onsubmit = (e) => {
+  e.preventDefault();
+  const track = {
+    id: DB.uid(),
+    name: document.getElementById('track-name').value.trim(),
+    location: document.getElementById('track-location').value.trim(),
+    surface: document.getElementById('track-surface').value,
+    notes: document.getElementById('track-notes').value.trim()
+  };
+  DB.set('tracks', [...DB.get('tracks'), track]);
+  document.getElementById('form-add-track').reset();
+  showView('tracks');
+  updateStats();
+};
+
+// ===== STATS =====
+function updateStats() {
+  document.getElementById('stat-models').textContent = DB.get('models').length;
+  document.getElementById('stat-setups').textContent = DB.get('setups').length;
+  document.getElementById('stat-tracks').textContent = DB.get('tracks').length;
+}
+
+// ===== UTILS =====
+function esc(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// ===== INIT =====
+loadState();
+showView('models');
+
+// Navigation click handlers - FIX: Use addEventListener instead of onclick
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    const view = this.dataset.view;
+    console.log('Nav clicked:', view);
+    
+    // Update nav active state
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    this.classList.add('active');
+    
+    // Show the correct view
+    console.log('Nav clicked, showing view:', view);
+    if (view === 'models') {
+      showView('models');
+    } else if (view === 'all-setups') {
+      showView('all-setups');
+    } else if (view === 'compare') {
+      showView('compare');
+    } else if (view === 'tracks') {
+      showView('tracks');
+    }
+  });
+});
+</script>
 </body>
 </html>
